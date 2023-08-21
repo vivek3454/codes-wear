@@ -1,10 +1,29 @@
-import React from 'react';
+'use client';
+import { add, remove, subTotal } from '@/redux/CartSlice';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineShoppingCart, AiFillCloseCircle, AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai';
 import { BsFillBagCheckFill } from 'react-icons/bs';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Checkout = () => {
-  // const items = useSelector((state) => state.cart);
+  const [subTotals, setSubTotals] = useState(0);
+  const dispatch = useDispatch();
+  const items = useSelector((state) => state.cart.products);
+  const SubTotal = useSelector((state) => state.cart.subTotal);
+  useEffect(() => {
+    dispatch(subTotal())
+    setSubTotals(SubTotal);
+  })
+
+  const handleAddToCart = (id) => {
+    dispatch(add({ id }));
+    dispatch(subTotal());
+  }
+  const handleRemoveFromCart = (id) => {
+    dispatch(remove(id));
+    dispatch(subTotal());
+  }
+
   return (
     <div className='container m-auto px-3'>
       <h1 className='font-bold text-3xl my-8 text-center'>Checkout</h1>
@@ -44,19 +63,24 @@ const Checkout = () => {
         </div>
       </div>
       <h2 className='font-semibold text-xl mt-10'>2. Review Cart Items</h2>
-      <div className={`py-10 px-8`}>
-        <ol className='list-decimal font-semibold mb-10'>
-          {/* {items && items?.map((item, index) => ( */}
-            <li key={1}>
+      <div className='py-3 px-8'>
+        {items.length !== 0 && <ol className='list-decimal font-semibold mb-10'>
+          {items.length !== 0 && items?.map((item, index) => (
+            <li key={index}>
               <div className="flex my-3">
                 <div className='font-semibold'>Tshirt - Wear the code</div>
-                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle className='cursor-pointer' size={20} /><span className='mx-2'>1</span><AiOutlinePlusCircle className='cursor-pointer' size={20} /></div>
+                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={() => handleRemoveFromCart(item.id)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={() => handleAddToCart(item.id)} className='cursor-pointer' size={20} /></div>
               </div>
             </li>
-          {/* ))} */}
-        </ol>
-        <span className='font-bold'>SubTotal: 2000</span>
-        <button className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' />Pay 2000</button>
+          ))}
+        </ol>}
+        {items.length === 0 && <div className='font-medium text-lg'>Cart is empty</div>}
+        {items.length !== 0 &&
+          <div className='flex gap-5 items-center'>
+            <span className='font-bold'>SubTotal: {subTotals}</span>
+            <button className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' />Pay {subTotals}</button>
+          </div>
+        }
       </div>
     </div>
   )
