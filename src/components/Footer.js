@@ -15,19 +15,19 @@ const Footer = () => {
         </div>
         <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-            <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">CATEGORIES</h2>
+            <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">SHOP</h2>
             <nav className="list-none mb-10">
               <li>
-                <a className="text-gray-600 hover:text-gray-800">First Link</a>
+                <Link href={'/tshirts'} className="text-gray-600 hover:text-gray-800">Tshirts</Link>
               </li>
               <li>
-                <a className="text-gray-600 hover:text-gray-800">Second Link</a>
+                <Link href={'/hoodies'} className="text-gray-600 hover:text-gray-800">Hoodies</Link>
               </li>
               <li>
-                <a className="text-gray-600 hover:text-gray-800">Third Link</a>
+                <Link href={'/mugs'} className="text-gray-600 hover:text-gray-800">Mugs</Link>
               </li>
               <li>
-                <a className="text-gray-600 hover:text-gray-800">Fourth Link</a>
+                <Link href={'/stickers'} className="text-gray-600 hover:text-gray-800">Stickers</Link>
               </li>
             </nav>
           </div>
