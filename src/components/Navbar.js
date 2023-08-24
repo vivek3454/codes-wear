@@ -41,12 +41,12 @@ const Navbar = () => {
     }
   }, [])
 
-  const handleAddToCart = () => {
-    dispatch(add({ id: 1, name: 'hoodie', price: 499, qty: 1 }));
+  const handleAddToCart = (slug) => {
+    dispatch(add({ slug }));
     dispatch(subTotal());
   }
-  const handleRemoveFromCart = () => {
-    dispatch(remove(1));
+  const handleRemoveFromCart = (slug) => {
+    dispatch(remove(slug));
     dispatch(subTotal());
   }
 
@@ -85,8 +85,8 @@ const Navbar = () => {
           {items && items?.map((item, index) => (
             <li key={index}>
               <div className="flex my-3">
-                <div className='w-2/3 font-semibold'>Tshirt - Wear the code</div>
-                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={handleRemoveFromCart} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={handleAddToCart} className='cursor-pointer' size={20} /></div>
+                <div className='w-2/3 font-semibold'>{item.name}({item.size}/{item.color})</div>
+                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={()=>handleRemoveFromCart(item.slug)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={()=>handleAddToCart(item.slug)} className='cursor-pointer' size={20} /></div>
               </div>
             </li>
           ))}

@@ -12,8 +12,8 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         add(state, action) {
-            const { id } = action.payload;
-            const product = state.products?.find(p => p.id === id);
+            const { slug } = action.payload;
+            const product = state.products?.find(p => p.slug === slug);
             if (product) {
                 product.qty += 1;
             }
@@ -23,13 +23,13 @@ const cartSlice = createSlice({
             localStorage.setItem('productCart',JSON.stringify(state.products));
         },
         remove(state, action) {
-            const id = action.payload;
-            const product = state.products?.find(p => p.id === id);
+            const slug = action.payload;
+            const product = state.products?.find(p => p.slug === slug);
             if (product.qty > 1) {
                 product.qty -= 1;
             }
             else {
-                state.products = state.products.filter((item) => item.id !== id);
+                state.products = state.products.filter((item) => item.slug !== slug);
                 state.subTotal = 0;
             }
             localStorage.setItem('productCart', JSON.stringify(state.products));
