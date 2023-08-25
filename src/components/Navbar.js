@@ -78,14 +78,14 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div ref={cartRef} className={`w-72 h-[100vh] fixed top-0 bottom-0 right-0 bg-red-100 py-10 px-8 transition-transform ${(isOpen) ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div ref={cartRef} className={`w-80 overflow-y-scroll h-[100vh] absolute top-0 bottom-0 right-0 bg-red-100 py-10 px-8 transition-transform ${(isOpen) ? 'translate-x-0' : 'translate-x-full'}`}>
         <h2 className='font-bold text-xl text-center'>Shopping Cart</h2>
         <span onClick={closeCart} className='absolute text-2xl cursor-pointer top-2 right-2 text-red-400'><AiFillCloseCircle /></span>
         <ol className='list-decimal font-semibold mb-10'>
           {items && items?.map((item, index) => (
             <li key={index}>
-              <div className="flex my-3">
-                <div className='w-2/3 font-semibold'>{item.name}({item.size}/{item.color})</div>
+              <div className="flex items-center my-3">
+                <div className='w-2/3 font-semibold'>{item.name}<br />({item.size}/{item.color})</div>
                 <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={()=>handleRemoveFromCart(item.slug)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={()=>handleAddToCart(item.slug)} className='cursor-pointer' size={20} /></div>
               </div>
             </li>
