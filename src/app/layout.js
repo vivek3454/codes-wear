@@ -5,6 +5,8 @@ import { Inter } from 'next/font/google'
 import Footer from '@/components/Footer'
 import { useState } from 'react'
 import AppProvider from '@/redux/AppProvider'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +25,7 @@ export default function RootLayout({ children }) {
           {children}
           <Footer />
         </AppProvider>
+        <ToastContainer/>
       </body>
     </html>
   )
