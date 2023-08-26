@@ -1,7 +1,44 @@
+'use client'
+import axios from 'axios';
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react'
+import { toast } from 'react-toastify';
+
 
 const Signup = () => {
+  const [userInfo, setUserInfo] = useState({ name: '', email: '', password: '' });
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await axios.post('http://localhost:3000/api/signup', userInfo);
+    if (res.data.success) {
+      toast.success('Your account created successfully', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      router.push('/')
+    }
+    else {
+      toast.error(res.data.message, {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -10,26 +47,26 @@ const Signup = () => {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" action="#" method="POST">
+        <form onSubmit={handleSubmit} className="space-y-6" action="#" method="POST">
           <div>
-            <label for="name" className="block text-sm font-medium leading-6 text-gray-900">Name</label>
+            <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Name</label>
             <div className="mt-2">
-              <input id="name" name="name" type="text" autocomplete="name" required className="block w-full outline-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6" />
+              <input onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })} value={userInfo.name} id="name" name="name" type="text" autoComplete="name" required className="block px-3 w-full outline-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6" />
             </div>
           </div>
           <div>
-            <label for="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
             <div className="mt-2">
-              <input id="email" name="email" type="email" autocomplete="email" required className="block w-full outline-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6" />
+              <input onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })} value={userInfo.email} id="email" name="email" type="email" autoComplete="email" required className="block px-3 w-full outline-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6" />
             </div>
           </div>
 
           <div>
             <div className="flex items-center">
-              <label for="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
             </div>
             <div className="mt-2">
-              <input id="password" name="password" type="password" autocomplete="current-password" required className="block outline-none w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6" />
+              <input onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })} value={userInfo.password} id="password" name="password" type="password" autoComplete="current-password" required className="block px-3 outline-none w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6" />
             </div>
           </div>
 
