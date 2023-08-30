@@ -1,4 +1,5 @@
 'use client'
+import Loading from '@/components/Loading';
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
@@ -16,7 +17,8 @@ const Tshirts = () => {
   return (
     <section className="text-gray-600 container mx-auto">
       <div className="px-5 py-24 mx-auto">
-        <div className="flex flex-wrap justify-center -m-4">
+        {Object.keys(products).length === 0 && <Loading />}
+        {Object.keys(products).length > 0 && <div className="flex flex-wrap justify-center -m-4">
           {Object.keys(products).map((product, i) => (
 
             <Link key={i} href={`/product/${products[product].slug}`} className='shadow m-2 rounded'>
@@ -46,7 +48,7 @@ const Tshirts = () => {
               </div>
             </Link>
           ))}
-        </div>
+        </div>}
       </div>
     </section>
   )

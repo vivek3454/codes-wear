@@ -1,4 +1,5 @@
 'use client'
+import Loading from '@/components/Loading';
 import axios from 'axios';
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -16,6 +17,7 @@ const Hoodies = () => {
   return (
     <section className="text-gray-600 container mx-auto">
       <div className="px-5 py-24 mx-auto">
+      {Object.keys(products).length === 0 && <Loading />}
         <div className="flex flex-wrap justify-center -m-4">
           {Object.keys(products).map((product, i) => (
 
