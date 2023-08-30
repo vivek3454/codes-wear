@@ -68,7 +68,7 @@ const Checkout = () => {
           {items.length !== 0 && items?.map((item, index) => (
             <li key={index}>
               <div className="flex my-3">
-                <div className='font-semibold'>Tshirt - Wear the code</div>
+                <div className='font-semibold'>{item.name}({item.size}/{item.color})</div>
                 <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={() => handleRemoveFromCart(item.id)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={() => handleAddToCart(item.id)} className='cursor-pointer' size={20} /></div>
               </div>
             </li>
