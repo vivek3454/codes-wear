@@ -2,13 +2,19 @@
 import axios from 'axios';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 
 
 const Signup = () => {
   const [userInfo, setUserInfo] = useState({ name: '', email: '', password: '' });
   const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      router.push('/');
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
