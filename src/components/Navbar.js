@@ -7,16 +7,17 @@ import { MdAccountCircle } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { clear, add, remove, subTotal, getProductsCartFromLocalStorage } from '@/redux/CartSlice';
 
-const Navbar = () => {
+const Navbar = ({ user, handleLogout }) => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getProductsCartFromLocalStorage())
-  }, [])
-  
   const [isOpen, setIsOpen] = useState(false);
+  const [toggleDropDown, setToggleDropDown] = useState(false)
   const items = useSelector((state) => state.cart.products);
   const cartRef = useRef();
   const cart1Ref = useRef();
+
+  useEffect(() => {
+    dispatch(getProductsCartFromLocalStorage());
+  }, [])
   const openCart = () => {
     setIsOpen(true);
   }
@@ -41,6 +42,8 @@ const Navbar = () => {
     }
   }, [])
 
+
+
   const handleAddToCart = (slug) => {
     dispatch(add({ slug }));
     dispatch(subTotal());
@@ -63,18 +66,23 @@ const Navbar = () => {
           <Link href={'stickers'} className="mr-5 hover:text-gray-900">Stickers</Link>
           <Link href={'/mugs'} className="mr-5 hover:text-gray-900">Mugs</Link>
         </nav>
-        {/* <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button
-          <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
-          <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </button> */}
         <div className='flex items-center relative'>
-          <Link ref={cart1Ref} href={'/login'} className="mr-4 text-[26px] absolute top-4 right-1 md:static hover:text-gray-900">
-            <MdAccountCircle />
-          </Link>
+          {user.value &&
+            <Link ref={cart1Ref} href={'/login'} className="mr-4 text-[26px] absolute top-4 right-1 md:static hover:text-gray-900">
+              <MdAccountCircle onMouseOver={() => setToggleDropDown(true)} onMouseLeave={() => setToggleDropDown(false)} />
+            </Link>
+          }
+          {toggleDropDown && <div onMouseOver={() => setToggleDropDown(true)} onMouseLeave={() => setToggleDropDown(false)} className='absolute right-0 top-6 rounded-md px-5 bg-white w-36'>
+            <ul className='py-2'>
+              <Link href={'/myAccount'}><li className='py-1 hover:text-black text-sm'>My Account</li></Link>
+              <Link href={'/orders'}><li className='py-1 hover:text-black text-sm'>Orders</li></Link>
+              <li onClick={handleLogout} className='py-1 hover:text-black cursor-pointer text-sm'>Logout</li>
+            </ul>
+          </div>}
+          {!user.value && <Link href={'/login'} className="flex mr-4 w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Sign in</Link>}
           <div ref={cart1Ref} onClick={openCart} className="mr-5 cursor-pointer text-2xl absolute top-3 right-1 md:relative md:top-0 hover:text-gray-900">
             <AiOutlineShoppingCart />
-            <span className='absolute top-2 left-4 text-sm bg-red-500 w-5 h-5 flex justify-center items-center font-semibold rounded-full'>{items?.length}</span>
+            {items?.length > 0 && <span className='absolute top-2 left-4 text-sm bg-red-500 w-5 h-5 flex justify-center items-center font-semibold rounded-full'>{items?.length}</span>}
           </div>
         </div>
       </div>
@@ -86,7 +94,7 @@ const Navbar = () => {
             <li key={index}>
               <div className="flex items-center my-3">
                 <div className='w-2/3 font-semibold'>{item.name}<br />({item.size}/{item.color})</div>
-                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={()=>handleRemoveFromCart(item.slug)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={()=>handleAddToCart(item.slug)} className='cursor-pointer' size={20} /></div>
+                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={() => handleRemoveFromCart(item.slug)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={() => handleAddToCart(item.slug)} className='cursor-pointer' size={20} /></div>
               </div>
             </li>
           ))}
