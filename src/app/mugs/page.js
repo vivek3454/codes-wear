@@ -7,7 +7,7 @@ const Mugs = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const getMugs = async () => {
-      const res = await axios.get('http://localhost:3000/api/getMugs')
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getMugs`)
       setProducts(res.data.mugs);
     }
     getMugs();
@@ -15,8 +15,8 @@ const Mugs = () => {
 
   return (
     <section className="text-gray-600 container mx-auto">
-      {products.length === 0 && <div>No products</div>}
-      <div className="px-5 py-24 mx-auto">
+      {(products.length === 0 || products.length === undefined) && <div className='h-[60vh] flex justify-center items-center'>No products</div>}
+     {products.length > 0 && <div className="px-5 py-24 mx-auto">
         <div className="flex flex-wrap justify-center -m-4">
           {Object.keys(products).map((product, i) => (
 
@@ -48,7 +48,7 @@ const Mugs = () => {
             </Link>
           ))}
         </div>
-      </div>
+      </div>}
     </section>
   )
 }

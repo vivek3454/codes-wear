@@ -8,7 +8,7 @@ const Hoodies = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const getAllProducts = async () => {
-      const res = await axios.get('http://localhost:3000/api/getHoodies')
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getHoodies`)
       setProducts(res.data.hoodies);
     }
     getAllProducts();

@@ -6,7 +6,7 @@ export async function POST(Request) {
     try {
         await connectToDb();
         const product = await Product.findOne({slug});
-        const variants = await Product.find({title: product.title});
+        const variants = await Product.find({title: product.title, category: product.category});
         let colorSizeSlug = {};
 
         for (const item of variants) {

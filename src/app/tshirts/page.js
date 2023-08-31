@@ -7,7 +7,7 @@ const Tshirts = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const getAllProducts = async () => {
-      const res = await fetch('http://localhost:3000/api/getTshirts')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getTshirts`)
       const data = await res.json();
       setProducts(data.tshirts);
     }

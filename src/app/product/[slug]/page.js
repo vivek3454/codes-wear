@@ -21,7 +21,7 @@ const ProductDetail = ({ params }) => {
 
   useEffect(() => {
     const getProduct = async () => {
-      const { data } = await axios.post('http://localhost:3000/api/getproduct', { slug });
+      const { data } = await axios.post(`${process.env.HOST}/api/getproduct`, { slug });
       setColor(data.product.color)
       setSize(data.product.size)
       setVariants(data.variants);
@@ -36,7 +36,7 @@ const ProductDetail = ({ params }) => {
   }
 
   const checkServicebility = async () => {
-    let pins = await axios.get('http://localhost:3000/api/pincode');
+    let pins = await axios.get(`${process.env.HOST}/api/pincode`);
     if (pins.data.includes(parseInt(pin))) {
       setServicebility(true);
       toast.success('Your Pincode is serviceable!', {
@@ -80,7 +80,7 @@ const ProductDetail = ({ params }) => {
   }
 
   const refreshVariant = (newColor, newSize) => {
-    let url = `http://localhost:3000/product/${variants[newColor][newSize]['slug']}`;
+    let url = `${process.env.NEXT_PUBLIC_HOST}/product/${variants[newColor][newSize]['slug']}`;
     window.location.href = url;
   }
 
