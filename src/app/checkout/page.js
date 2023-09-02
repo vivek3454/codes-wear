@@ -1,13 +1,18 @@
 'use client';
 import { add, remove, subTotal } from '@/redux/CartSlice';
+import axios from 'axios';
+import Script from 'next/script';
 import React, { useEffect, useState } from 'react';
 import { AiOutlineShoppingCart, AiFillCloseCircle, AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 const Checkout = () => {
   const [subTotals, setSubTotals] = useState(0);
   const dispatch = useDispatch();
+  const router = useRouter();
   const items = useSelector((state) => state.cart.products);
   const SubTotal = useSelector((state) => state.cart.subTotal);
   useEffect(() => {
@@ -24,8 +29,63 @@ const Checkout = () => {
     dispatch(subTotal());
   }
 
+  const handlePayment = async (amount) => {
+    const { data: { order } } = await toast.promise(
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { amount }),
+      {
+        pending: 'Please wait...',
+        success: {
+          render() {
+            return 'You are successfully done!'
+          },
+        },
+        error: 'Please try again',
+      },
+      {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      }
+    )
+    console.log(order);
+    const options = {
+      key: process.env.RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: "INR",
+      name: "Vivek Parde",
+      description: "Test Transaction",
+      image: "https://example.com/your_logo",
+      order_id: order.id,
+      handler: async function (response) {
+        const { data } = await axios.post('http://localhost:3000/api/verify', { response });
+        if (data.success) {
+          router.push('/paymentdone');
+        }
+      },
+      prefill: { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
+        name: "Gaurav Kumar", //your customer's name
+        email: "gaurav.kumar@example.com",
+        contact: "9000090000" //Provide the customer's phone number for better conversion rates 
+      },
+      notes: {
+        "address": "Razorpay Corporate Office"
+      },
+      theme: {
+        "color": "#121212"
+      }
+    };
+    const razor = new window.Razorpay(options);
+    razor.open();
+  }
+
   return (
     <div className='container m-auto px-3'>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js"></Script>
       <h1 className='font-bold text-3xl my-8 text-center'>Checkout</h1>
       <h2 className='font-semibold text-xl'>1. Delivery Details</h2>
       <div className="mx-auto flex flex-col md:flex-row my-4">
@@ -78,7 +138,7 @@ const Checkout = () => {
         {items.length !== 0 &&
           <div className='flex gap-5 items-center'>
             <span className='font-bold'>SubTotal: {subTotals}</span>
-            <button className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' />Pay {subTotals}</button>
+            <button onClick={() => handlePayment(subTotals)} className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' />Pay {subTotals}</button>
           </div>
         }
       </div>
