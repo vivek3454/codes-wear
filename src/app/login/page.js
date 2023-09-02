@@ -14,14 +14,23 @@ const Login = () => {
       router.push('/');
     }
   }, [])
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/login`, userInfo);
-    localStorage.setItem('token', res.data.token);
-    if (res.data.success) {
-      toast.success('You are successfully logged in', {
+    const res = await toast.promise(
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/login`, userInfo),
+      {
+        pending: 'Please wait...',
+        success: {
+          render() {
+            router.push('/');
+            return 'You are successfully logged in'
+          },
+        },
+        error: 'Please try again',
+      },
+      {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -30,10 +39,10 @@ const Login = () => {
         draggable: true,
         progress: undefined,
         theme: "light",
-      });
-      router.push('/');
-    }
-    else {
+      }
+    )
+    localStorage.setItem('token', res.data.token);
+    if (!res.data.success) {
       toast.error(res.data.message, {
         position: "top-center",
         autoClose: 1000,
