@@ -11,6 +11,6 @@ export async function POST(Request) {
     if (userExist) {
         return NextResponse.json({success: false, message: 'email already exist'});
     }
-    const user = User.create({name, email,password: CryptoJS.AES.encrypt(password, 'secret123').toString() });
+    const user = User.create({name, email,password: CryptoJS.AES.encrypt(password, process.env.AES_SECRET).toString() });
     return NextResponse.json({success: true, user: {name:user.name,email: user.email}});
 }

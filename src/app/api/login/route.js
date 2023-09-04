@@ -12,9 +12,9 @@ export async function POST(Request) {
         if (!user) {
             return NextResponse.json({ success: false, message: 'email is not existed' });
         }
-        const originalText = CryptoJS.AES.decrypt(user.password, 'secret123').toString(CryptoJS.enc.Utf8)
+        const originalText = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8)
         if (password === originalText) {
-            const token = sign({ name: user.name, email: user.email }, 'jwtsecret', {expiresIn: '2d'})
+            const token = sign({ name: user.name, email: user.email }, process.env.JWT_SECRET, {expiresIn: '2d'})
             return NextResponse.json({ success: true, token });
         }
         else {
