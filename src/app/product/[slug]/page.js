@@ -21,7 +21,7 @@ const ProductDetail = ({ params }) => {
 
   useEffect(() => {
     const getProduct = async () => {
-      const { data } = await axios.post(`${process.env.HOST}/api/getproduct`, { slug });
+      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/getproduct`, { slug });
       setColor(data.product.color)
       setSize(data.product.size)
       setVariants(data.variants);
@@ -66,7 +66,7 @@ const ProductDetail = ({ params }) => {
   }
 
   const handleAddToCart = () => {
-    dispatch(add({ name: product.title, price: product.price, slug: product.slug, qty: 1, size, color }));
+    dispatch(add({ name: product.title, price: product.price, qty: 1, size, color }));
     toast.success('Item added to Cart!', {
       position: "bottom-center",
       autoClose: 1000,
