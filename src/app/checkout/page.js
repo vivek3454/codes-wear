@@ -3,41 +3,82 @@ import { add, remove, subTotal } from '@/redux/CartSlice';
 import axios from 'axios';
 import Script from 'next/script';
 import React, { useEffect, useState } from 'react';
-import { AiOutlineShoppingCart, AiFillCloseCircle, AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai';
+import { AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 const Checkout = () => {
-  const [subTotals, setSubTotals] = useState(0);
+  const [userInfo, setUserInfo] = useState({ name: '', email: '', address: '', city: '', state: '', phone: '', pincode: '' });
+  const [isDisabled, setIsDisabled] = useState(true);
   const dispatch = useDispatch();
   const router = useRouter();
   const items = useSelector((state) => state.cart.products);
-  const SubTotal = useSelector((state) => state.cart.subTotal);
   useEffect(() => {
-    dispatch(subTotal())
-    setSubTotals(SubTotal);
-  })
+    dispatch(subTotal());
+  }, [])
+  const subTotals = useSelector((state) => state.cart.subTotal);
 
-  const handleAddToCart = (id) => {
-    dispatch(add({ id }));
+  const handleAddToCart = (slug) => {
+    dispatch(add({ slug }));
     dispatch(subTotal());
   }
-  const handleRemoveFromCart = (id) => {
-    dispatch(remove(id));
+  const handleRemoveFromCart = (slug) => {
+    dispatch(remove(slug));
     dispatch(subTotal());
   }
 
-  const handlePayment = async (amount) => {
-    const { data: { order } } = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { amount }),
+  const handleOnchange = (e) => {
+    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+  }
+  useEffect(() => {
+    if (userInfo.name && userInfo.email && userInfo.city && userInfo.state && userInfo.phone && userInfo.pincode) {
+      setIsDisabled(false);
+    }
+    else {
+      setIsDisabled(true);
+    }
+  }, [userInfo])
+
+
+
+  const handlePayment = async () => {
+    const { data: { order, id } } = await toast.promise(
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subTotals, email: userInfo.email, items, address: userInfo.address }),
       {
         pending: 'Please wait...',
         success: {
           render() {
-            return 'You are successfully done!'
-          },
+            const options = {
+              key: process.env.RAZORPAY_KEY_ID,
+              amount: order.amount,
+              currency: "INR",
+              name: "Vivek Parde",
+              description: "Test Transaction",
+              image: "/codesWear.png",
+              order_id: order.id,
+              handler: async function (response) {
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/verify`, { response, id });
+                if (data.success) {
+                  router.push(`order?id=${order.id}`);
+                }
+              },
+              prefill: {
+                name: userInfo.name,
+                email: userInfo.email,
+                contact: userInfo.phone
+              },
+              notes: {
+                "address": "Razorpay Corporate Office"
+              },
+              theme: {
+                "color": "#121212"
+              }
+            };
+            const razor = window.Razorpay(options);
+            razor.open();
+          }
         },
         error: 'Please try again',
       },
@@ -52,35 +93,6 @@ const Checkout = () => {
         theme: "light",
       }
     )
-    console.log(order);
-    const options = {
-      key: process.env.RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: "INR",
-      name: "Vivek Parde",
-      description: "Test Transaction",
-      image: "https://example.com/your_logo",
-      order_id: order.id,
-      handler: async function (response) {
-        const { data } = await axios.post('http://localhost:3000/api/verify', { response });
-        if (data.success) {
-          router.push('/paymentdone');
-        }
-      },
-      prefill: { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
-        name: "Gaurav Kumar", //your customer's name
-        email: "gaurav.kumar@example.com",
-        contact: "9000090000" //Provide the customer's phone number for better conversion rates 
-      },
-      notes: {
-        "address": "Razorpay Corporate Office"
-      },
-      theme: {
-        "color": "#121212"
-      }
-    };
-    const razor = new window.Razorpay(options);
-    razor.open();
   }
 
   return (
@@ -91,35 +103,35 @@ const Checkout = () => {
       <div className="mx-auto flex flex-col md:flex-row my-4">
         <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
           <label htmlFor="name" className='text-gray-500'>Name</label>
-          <input type="text" name='name' id='name' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.name} type="text" name='name' id='name' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
         <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
           <label htmlFor="email" className='text-gray-500'>Email</label>
-          <input type="email" name='email' id='email' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.email} type="email" name='email' id='email' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
       </div>
       <div className="px-2 flex flex-col justify-center w-full">
         <label htmlFor="address" className='text-gray-500'>Address</label>
-        <textarea name="address" id="address" className='px-2 rounded border-2 border-gray-300' cols="30" rows="3"></textarea>
+        <textarea onChange={handleOnchange} value={userInfo.address} name="address" id="address" className='px-2 rounded border-2 border-gray-300' cols="30" rows="3"></textarea>
       </div>
       <div className="mx-auto flex flex-col md:flex-row my-4">
         <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
           <label htmlFor="phone" className='text-gray-500'>Phone</label>
-          <input type="tel" name='phone' id='phone' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.phone} type="tel" name='phone' id='phone' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
         <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
           <label htmlFor="city" className='text-gray-500'>City</label>
-          <input type="text" namse='city' id='city' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.city} type="text" name='city' id='city' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
       </div>
       <div className="mx-auto flex flex-col md:flex-row my-4">
         <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
           <label htmlFor="state" className='text-gray-500'>State</label>
-          <input type="text" name='state' id='state' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.state} type="text" name='state' id='state' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
         <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
           <label htmlFor="pincode" className='text-gray-500'>Pincode</label>
-          <input type="number" name='pincode' id='pincode' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.pincode} type="number" name='pincode' id='pincode' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
       </div>
       <h2 className='font-semibold text-xl mt-10'>2. Review Cart Items</h2>
@@ -129,7 +141,7 @@ const Checkout = () => {
             <li key={index}>
               <div className="flex my-3">
                 <div className='font-semibold'>{item.name}({item.size}/{item.color})</div>
-                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={() => handleRemoveFromCart(item.id)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={() => handleAddToCart(item.id)} className='cursor-pointer' size={20} /></div>
+                <div className='w-1/3 font-semibold flex justify-center items-center'><AiOutlineMinusCircle onClick={() => handleRemoveFromCart(item.slug)} className='cursor-pointer' size={20} /><span className='mx-2'>{item.qty}</span><AiOutlinePlusCircle onClick={() => handleAddToCart(item.slug)} className='cursor-pointer' size={20} /></div>
               </div>
             </li>
           ))}
@@ -138,7 +150,7 @@ const Checkout = () => {
         {items.length !== 0 &&
           <div className='flex gap-5 items-center'>
             <span className='font-bold'>SubTotal: {subTotals}</span>
-            <button onClick={() => handlePayment(subTotals)} className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' />Pay {subTotals}</button>
+            <button disabled={isDisabled} onClick={handlePayment} className={`flex text-white border-0 py-1 px-2 focus:outline-none rounded ${isDisabled ? 'bg-red-300' : 'bg-red-500 hover:bg-red-600'}`}><BsFillBagCheckFill className='m-1' />Pay {subTotals}</button>
           </div>
         }
       </div>
