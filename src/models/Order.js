@@ -2,13 +2,14 @@ import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
     email: { type: String, required: true },
+    orderId: { type: String, required: true },
     products: { type: Array },
     paymentInfo: {
         razorpay_payment_id: {
             type: String,
 
         },
-        razorpay_subscription_id: {
+        razorpay_order_id: {
             type: String,
 
         },
