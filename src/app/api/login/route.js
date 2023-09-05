@@ -3,6 +3,7 @@ import User from "@/models/User";
 import { NextResponse } from "next/server";
 import CryptoJS from "crypto-js";
 import { sign } from "jsonwebtoken";
+import { cookies } from 'next/headers';
 
 export async function POST(Request) {
     try {
@@ -14,7 +15,8 @@ export async function POST(Request) {
         }
         const originalText = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8)
         if (password === originalText) {
-            const token = sign({ name: user.name, email: user.email }, process.env.JWT_SECRET, {expiresIn: '2d'})
+            const token = sign({ name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: '2d' })
+            cookies().set('codesWearJwt', token, { secure: true });
             return NextResponse.json({ success: true, token });
         }
         else {
