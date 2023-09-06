@@ -10,7 +10,8 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 const Checkout = () => {
-  const [userInfo, setUserInfo] = useState({ name: '', email: '', address: '', city: '', state: '', phone: '', pincode: '' });
+  const [userInfo, setUserInfo] = useState({ name: '', email: '', address: '', city: '', state: '', phone: '' });
+  const [pincode, setPincode] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -29,11 +30,26 @@ const Checkout = () => {
     dispatch(subTotal());
   }
 
-  const handleOnchange = (e) => {
-    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+  const handleOnchange = async (e) => {
+    if (e.target.name === 'pincode') {
+      setPincode(e.target.value);
+      if (e.target.value.length === 6) {
+        let { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
+        if (Object.keys(data).includes(e.target.value)) {
+          setUserInfo({ ...userInfo, city: data[e.target.value][0], state: data[e.target.value][1] });
+        }
+      }
+      else {
+        setUserInfo((prev) => { return { ...prev, city: '', state: '' } });
+      }
+    }
+    else {
+      setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+    }
+
   }
   useEffect(() => {
-    if (userInfo.name && userInfo.email && userInfo.city && userInfo.state && userInfo.phone && userInfo.pincode) {
+    if (userInfo.name && userInfo.email && userInfo.city && userInfo.state && userInfo.phone && pincode) {
       setIsDisabled(false);
     }
     else {
@@ -49,38 +65,44 @@ const Checkout = () => {
       {
         pending: 'Please wait...',
         success: {
-          render() {
-            const options = {
-              key: process.env.RAZORPAY_KEY_ID,
-              amount: order.amount,
-              currency: "INR",
-              name: "Vivek Parde",
-              description: "Test Transaction",
-              image: "/codesWear.png",
-              order_id: order.id,
-              handler: async function (response) {
-                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/verify`, { response, id });
-                if (data.success) {
-                  router.push(`order?id=${order.id}`);
+          render({ data }) {
+            if (data.data.success) {
+              const options = {
+                key: process.env.RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: "INR",
+                name: "Vivek Parde",
+                description: "Test Transaction",
+                image: "/codesWear.png",
+                order_id: order.id,
+                handler: async function (response) {
+                  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/verify`, { response, id });
+                  if (data.success) {
+                    router.push(`order?id=${order.id}`);
+                  }
+                },
+                prefill: {
+                  name: userInfo.name,
+                  email: userInfo.email,
+                  contact: userInfo.phone
+                },
+                notes: {
+                  "address": "Razorpay Corporate Office"
+                },
+                theme: {
+                  "color": "#121212"
                 }
-              },
-              prefill: {
-                name: userInfo.name,
-                email: userInfo.email,
-                contact: userInfo.phone
-              },
-              notes: {
-                "address": "Razorpay Corporate Office"
-              },
-              theme: {
-                "color": "#121212"
-              }
-            };
-            const razor = window.Razorpay(options);
-            razor.open();
+              };
+              const razor = window.Razorpay(options);
+              razor.open();
+            }
           }
         },
-        error: 'Please try again',
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message || 'Please try again';
+          }
+        }
       },
       {
         position: "top-center",
@@ -120,18 +142,18 @@ const Checkout = () => {
           <input onChange={handleOnchange} value={userInfo.phone} type="tel" name='phone' id='phone' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
         <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
-          <label htmlFor="city" className='text-gray-500'>City</label>
-          <input onChange={handleOnchange} value={userInfo.city} type="text" name='city' id='city' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <label htmlFor="pincode" className='text-gray-500'>Pincode</label>
+          <input onChange={handleOnchange} value={pincode} type="number" name='pincode' id='pincode' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
       </div>
       <div className="mx-auto flex flex-col md:flex-row my-4">
+        <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
+          <label htmlFor="city" className='text-gray-500'>City</label>
+          <input disabled={true} onChange={handleOnchange} value={userInfo.city} type="text" name='city' id='city' className='px-2 h-10 rounded border-2 border-gray-300' />
+        </div>
         <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
           <label htmlFor="state" className='text-gray-500'>State</label>
-          <input onChange={handleOnchange} value={userInfo.state} type="text" name='state' id='state' className='px-2 h-10 rounded border-2 border-gray-300' />
-        </div>
-        <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
-          <label htmlFor="pincode" className='text-gray-500'>Pincode</label>
-          <input onChange={handleOnchange} value={userInfo.pincode} type="number" name='pincode' id='pincode' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input disabled={true} onChange={handleOnchange} value={userInfo.state} type="text" name='state' id='state' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
       </div>
       <h2 className='font-semibold text-xl mt-10'>2. Review Cart Items</h2>
