@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-// import { cookies } from 'next/headers';
 
 const Orders = () => {
   const router = useRouter();
@@ -59,7 +58,7 @@ const Orders = () => {
             {orders && orders.map((order, i) => (
               <tr key={i} className="bg-white border-b dark:border-gray-700">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  {order.paymentInfo.razorpay_order_id}
+                  {order.orderId}
                 </th>
                 <td className="px-6 py-4">
                   {order.email}
@@ -68,7 +67,7 @@ const Orders = () => {
                   {order.checkoutAmount}
                 </td>
                 <td className="px-6 py-4">
-                  <Link href={`/order?id=${order.paymentInfo.razorpay_order_id}`}>Detail</Link>
+                  <Link href={`/order?id=${order.orderId}`}>Detail</Link>
                 </td>
               </tr>
             ))
