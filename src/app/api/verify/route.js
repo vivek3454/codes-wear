@@ -2,6 +2,7 @@ import connectToDb from "@/middleware/db";
 import Order from "@/models/Order";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import Product from "@/models/Product";
 
 export async function POST(Request) {
     try {
@@ -12,7 +13,7 @@ export async function POST(Request) {
             .update(text.toString())
             .digest('hex');
         if (generated_signature === razorpay_signature) {
-            await Order.findByIdAndUpdate(id, {
+            const order = await Order.findByIdAndUpdate(id, {
                 paymentInfo: {
                     razorpay_order_id,
                     razorpay_payment_id,
@@ -20,6 +21,9 @@ export async function POST(Request) {
                 },
                 status: 'Paid'
             })
+            for (const product of order.products) {
+                await Product.findOneAndUpdate({slug: product.slug}, {$inc: {availableQty: - product.qty}})
+            }
             return NextResponse.json({ success: true, message: 'payment is successful' });
         }
         else {
