@@ -6,7 +6,7 @@ export async function GET(Request) {
     // let size = ['L', 'XL', 'M', 'S', 'XXL']
     try {
         await connectToDb();
-        const products = await Product.find({category: 'tshirts'});
+        const products = await Product.find({ category: 'tshirts' });
         let tshirts = {};
         for (const product of products) {
             if (product.title in tshirts) {
@@ -18,12 +18,14 @@ export async function GET(Request) {
                 }
             }
             else {
-                if (product.availableQty > 0) {
-                    tshirts[product.title] = JSON.parse(JSON.stringify(product));
-                }
+                tshirts[product.title] = JSON.parse(JSON.stringify(product));
                 if (product.availableQty > 0) {
                     tshirts[product.title].color = [product.color];
                     tshirts[product.title].size = [product.size];
+                }
+                else {
+                    tshirts[product.title].color = [];
+                    tshirts[product.title].size = [];
                 }
             }
         }
