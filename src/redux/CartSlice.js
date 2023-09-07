@@ -3,56 +3,58 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    products: [],
+    cart: [],
     subTotal: 0
 };
 
 const cartSlice = createSlice({
-    name: 'products',
+    name: 'cart',
     initialState,
     reducers: {
         add(state, action) {
             const { slug } = action.payload;
-            const product = state.products?.find(p => p.slug === slug);
+            const product = state.cart?.find(p => p.slug === slug);
             if (product) {
                 product.qty += 1;
             }
             else {
-                state.products?.push(action.payload);
+                state.cart?.push(action.payload);
             }
-            localStorage.setItem('productCart', JSON.stringify(state.products));
+            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
         remove(state, action) {
             const slug = action.payload;
-            const product = state.products?.find(p => p.slug === slug);
+            const product = state.cart?.find(p => p.slug === slug);
             if (product.qty > 1) {
                 product.qty -= 1;
             }
             else {
-                state.products = state.products.filter((item) => item.slug !== slug);
+                state.cart = state.cart.filter((item) => item.slug !== slug);
                 state.subTotal = 0;
             }
-            localStorage.setItem('productCart', JSON.stringify(state.products));
+            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
         clear(state) {
-            state.products = [];
+            state.cart = [];
             state.subTotal = 0;
-            localStorage.setItem('productCart', JSON.stringify(state.products));
+            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
         subTotal(state) {
             let total = 0;
-            for (const product of state.products) {
+            for (const product of state.cart) {
                 total += product.qty * product.price;
             }
             state.subTotal = total;
-            localStorage.setItem('productCart', JSON.stringify(state.products));
+            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
-        getProductsCartFromLocalStorage(state) {
-            const localStorageValue = JSON.parse(localStorage.getItem('productCart'));
-            state.products = localStorageValue;
+        getCartFromLocalStorage(state) {
+            const localStorageValue = JSON.parse(localStorage.getItem('codesWearShoppingCart'));
+            if (localStorageValue) {
+                state.cart = localStorageValue;
+            }
         }
     }
 })
 
-export const { add, remove, clear, subTotal, getProductsCartFromLocalStorage } = cartSlice.actions;
+export const { add, remove, clear, subTotal, getCartFromLocalStorage } = cartSlice.actions;
 export default cartSlice.reducer;
