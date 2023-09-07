@@ -16,7 +16,11 @@ export async function POST(Request) {
         const originalText = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8)
         if (password === originalText) {
             const token = sign({ name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: '2d' })
-            cookies().set('codesWearJwt', token, { secure: true });
+            const cookieOption = {
+                maxAge: 7 * 24 * 60 * 60,
+                httpOnly: true
+            }
+            cookies().set('codesWearJwt', token, cookieOption);
             return NextResponse.json({ success: true, token });
         }
         else {
