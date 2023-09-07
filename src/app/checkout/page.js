@@ -1,5 +1,5 @@
 'use client';
-import { add, remove, subTotal } from '@/redux/CartSlice';
+import { add, remove, subTotal, clear } from '@/redux/CartSlice';
 import axios from 'axios';
 import Script from 'next/script';
 import React, { useEffect, useState } from 'react';
@@ -12,12 +12,26 @@ import { useRouter } from 'next/navigation';
 const Checkout = () => {
   const [userInfo, setUserInfo] = useState({ name: '', email: '', address: '', city: '', state: '', phone: '' });
   const [pincode, setPincode] = useState('');
+  const [isUser, setIsUser] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const dispatch = useDispatch();
   const router = useRouter();
   const items = useSelector((state) => state.cart.products);
   useEffect(() => {
     dispatch(subTotal());
+    const getUserEmail = async () => {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuseremail`);
+      if (data.success) {
+        setIsUser(true);
+        setUserInfo({ ...userInfo, email: data.email });
+      }
+      else{
+        setIsUser(false);
+        setUserInfo({ ...userInfo, email: '' });
+
+      }
+    }
+    getUserEmail();
   }, [])
   const subTotals = useSelector((state) => state.cart.subTotal);
 
@@ -61,7 +75,7 @@ const Checkout = () => {
 
   const handlePayment = async () => {
     const { data: { order, id } } = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subTotals, email: userInfo.email, items, address: userInfo.address }),
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subTotals, email: userInfo.email, items, address: userInfo.address, phone: userInfo.phone }),
       {
         pending: 'Please wait...',
         success: {
@@ -78,6 +92,7 @@ const Checkout = () => {
                 handler: async function (response) {
                   const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/verify`, { response, id });
                   if (data.success) {
+                    localStorage.removeItem('productCart');
                     router.push(`order?id=${order.id}`);
                   }
                 },
@@ -100,6 +115,7 @@ const Checkout = () => {
         },
         error: {
           render({ data }) {
+            dispatch(clear());
             return data?.response?.data?.message || 'Please try again';
           }
         }
@@ -127,10 +143,17 @@ const Checkout = () => {
           <label htmlFor="name" className='text-gray-500'>Name</label>
           <input onChange={handleOnchange} value={userInfo.name} type="text" name='name' id='name' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
-        <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
-          <label htmlFor="email" className='text-gray-500'>Email</label>
-          <input onChange={handleOnchange} value={userInfo.email} type="email" name='email' id='email' className='px-2 h-10 rounded border-2 border-gray-300' />
-        </div>
+        {isUser ?
+          <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
+            <label htmlFor="email" className='text-gray-500'>Email</label>
+            <input disabled={true} onChange={handleOnchange} value={userInfo.email} type="email" name='email' id='email' className='px-2 h-10 rounded border-2 border-gray-300' />
+          </div>
+          :
+          <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
+            <label htmlFor="email" className='text-gray-500'>Email</label>
+            <input onChange={handleOnchange} value={userInfo.email} type="email" name='email' id='email' className='px-2 h-10 rounded border-2 border-gray-300' />
+          </div>
+        }
       </div>
       <div className="px-2 flex flex-col justify-center w-full">
         <label htmlFor="address" className='text-gray-500'>Address</label>
