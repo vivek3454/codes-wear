@@ -101,8 +101,9 @@ const Navbar = ({ user, handleLogout }) => {
         </ol>
         <div className="flex gap-2">
           <Link href={'/checkout'}>
-            <button className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' /> CheckOut</button></Link>
-          <button onClick={handleClearCart} className="flex text-white bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded">Clear Cart</button>
+            <button disabled={items.length === 0} className="flex text-white disabled:bg-red-300 bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className='m-1' /> CheckOut</button>
+          </Link>
+          <button disabled={items.length === 0} onClick={handleClearCart} className="flex text-white disabled:bg-red-300 bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded">Clear Cart</button>
         </div>
       </div>
     </header>
