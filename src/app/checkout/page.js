@@ -83,7 +83,7 @@ const Checkout = () => {
   // handle Payment
   const handlePayment = async () => {
     const { data: { order, id } } = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subtotal, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone }),
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subtotal, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone, pincode }),
       {
         pending: 'Please wait...',
         success: {

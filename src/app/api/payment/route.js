@@ -3,10 +3,17 @@ import Order from "@/models/Order";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import pincodes from "../../../data/pincodes";
 
 export async function POST(Request) {
     try {
-        const { email, checkoutAmount, items, address, phone } = await Request.json();
+        const { email, checkoutAmount, items, address, phone, pincode } = await Request.json();
+
+        // checking pincode is serviceable or not
+        if (!Object.keys(pincodes).includes(pincode)) {
+            return NextResponse.json({ success: false, message: 'Sorry! This pincode is not serviceable. Please try again', isClear: false }, { status: 400 });
+        }
+
         // checking if cart tampered
         let subTotal = 0;
         for (const item of items) {
