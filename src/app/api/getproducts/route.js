@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(Request) {
     try {
         await connectToDb();
+        // get all products
         const products = await Product.find();
         return NextResponse.json({ products }, { status: 200 });
 

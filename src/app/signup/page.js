@@ -16,6 +16,7 @@ const Signup = () => {
     }
   }, [])
 
+  // function to sign up
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo);

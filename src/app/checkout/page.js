@@ -16,7 +16,10 @@ const Checkout = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const dispatch = useDispatch();
   const router = useRouter();
-  const items = useSelector((state) => state.cart.products);
+  // get cart
+  const { cart } = useSelector((state) => state.cart);
+
+  // get logged in user email
   useEffect(() => {
     dispatch(subTotal());
     const getUserEmail = async () => {
@@ -25,7 +28,7 @@ const Checkout = () => {
         setIsUser(true);
         setUserInfo({ ...userInfo, email: data.email });
       }
-      else{
+      else {
         setIsUser(false);
         setUserInfo({ ...userInfo, email: '' });
 
@@ -33,7 +36,9 @@ const Checkout = () => {
     }
     getUserEmail();
   }, [])
-  const subTotals = useSelector((state) => state.cart.subTotal);
+
+  // get subtotal
+  const subtotal = useSelector((state) => state.cart.subTotal);
 
   const handleAddToCart = (slug) => {
     dispatch(add({ slug }));
@@ -44,6 +49,7 @@ const Checkout = () => {
     dispatch(subTotal());
   }
 
+  // handle user input
   const handleOnchange = async (e) => {
     if (e.target.name === 'pincode') {
       setPincode(e.target.value);
@@ -62,6 +68,8 @@ const Checkout = () => {
     }
 
   }
+
+  // change pay button disabled state
   useEffect(() => {
     if (userInfo.name && userInfo.email && userInfo.city && userInfo.state && userInfo.phone && pincode) {
       setIsDisabled(false);
@@ -72,10 +80,10 @@ const Checkout = () => {
   }, [userInfo])
 
 
-
+  // handle Payment
   const handlePayment = async () => {
     const { data: { order, id } } = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subTotals, email: userInfo.email, items, address: userInfo.address, phone: userInfo.phone }),
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subtotal, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone }),
       {
         pending: 'Please wait...',
         success: {
@@ -108,14 +116,18 @@ const Checkout = () => {
                   "color": "#121212"
                 }
               };
+              // display razorpay payment interface
               const razor = window.Razorpay(options);
               razor.open();
             }
           }
         },
         error: {
+          // render toast if error
           render({ data }) {
-            dispatch(clear());
+            if (data?.response?.data?.isClear) {
+              dispatch(clear());
+            }
             return data?.response?.data?.message || 'Please try again';
           }
         }
@@ -162,7 +174,7 @@ const Checkout = () => {
       <div className="mx-auto flex flex-col md:flex-row my-4">
         <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
           <label htmlFor="phone" className='text-gray-500'>Phone</label>
-          <input onChange={handleOnchange} value={userInfo.phone} type="tel" name='phone' id='phone' className='px-2 h-10 rounded border-2 border-gray-300' />
+          <input onChange={handleOnchange} value={userInfo.phone} type="number" name='phone' id='phone' className='px-2 h-10 rounded border-2 border-gray-300' />
         </div>
         <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
           <label htmlFor="pincode" className='text-gray-500'>Pincode</label>
@@ -181,8 +193,8 @@ const Checkout = () => {
       </div>
       <h2 className='font-semibold text-xl mt-10'>2. Review Cart Items</h2>
       <div className='py-3 px-8'>
-        {items.length !== 0 && <ol className='list-decimal font-semibold mb-10'>
-          {items.length !== 0 && items?.map((item, index) => (
+        {cart.length !== 0 && <ol className='list-decimal font-semibold mb-10'>
+          {cart.length !== 0 && cart?.map((item, index) => (
             <li key={index}>
               <div className="flex my-3">
                 <div className='font-semibold'>{item.name}({item.size}/{item.color})</div>
@@ -191,11 +203,11 @@ const Checkout = () => {
             </li>
           ))}
         </ol>}
-        {items.length === 0 && <div className='font-medium text-lg'>Cart is empty</div>}
-        {items.length !== 0 &&
+        {cart.length === 0 && <div className='font-medium text-lg'>Cart is empty</div>}
+        {cart.length !== 0 &&
           <div className='flex gap-5 items-center'>
-            <span className='font-bold'>SubTotal: {subTotals}</span>
-            <button disabled={isDisabled} onClick={handlePayment} className={`flex text-white border-0 py-1 px-2 focus:outline-none rounded ${isDisabled ? 'bg-red-300' : 'bg-red-500 hover:bg-red-600'}`}><BsFillBagCheckFill className='m-1' />Pay {subTotals}</button>
+            <span className='font-bold'>SubTotal: {subtotal}</span>
+            <button disabled={isDisabled} onClick={handlePayment} className={`flex text-white border-0 py-1 px-2 focus:outline-none rounded ${isDisabled ? 'bg-red-300' : 'bg-red-500 hover:bg-red-600'}`}><BsFillBagCheckFill className='m-1' />Pay {subtotal}</button>
           </div>
         }
       </div>

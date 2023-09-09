@@ -9,7 +9,9 @@ import { toast } from 'react-toastify';
 const Orders = () => {
   const router = useRouter();
   const [orders, setOrders] = useState([])
+
   useEffect(() => {
+    // function to fetch users all orders
     const fetchOrders = async () => {
       let { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/myorders`);
       if (!data.success) {

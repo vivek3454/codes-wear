@@ -19,8 +19,9 @@ const ProductDetail = ({ params }) => {
   const [size, setSize] = useState('');
   const [variants, setVariants] = useState({});
   const [product, setProduct] = useState({});
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
+// get product detail
   useEffect(() => {
     const getProduct = async () => {
       const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/getproduct`, { slug });
@@ -34,6 +35,7 @@ const ProductDetail = ({ params }) => {
 
   }, [slug])
 
+// function to set pin
   const onChangePin = (e) => {
     setPin(e.target.value);
   }
@@ -81,14 +83,16 @@ const ProductDetail = ({ params }) => {
       theme: "light",
     });
   }
-
+  
   const refreshVariant = (newColor, newSize) => {
     let url = `${process.env.NEXT_PUBLIC_HOST}/product/${variants[newColor][newSize]['slug']}`;
-    window.location.href = url;
+    router.push(url);
   }
 
   const buyNow = () => {
+    // clearing cart
     dispatch(clear());
+    // adding in cart
     dispatch(add({ name: product.title, price: product.price, slug: product.slug, qty: 1, size, color }));
     router.push('/checkout')
   }
@@ -135,9 +139,10 @@ const ProductDetail = ({ params }) => {
                 </div>
               </div>
               <div className="flex">
-                <span className="title-font font-medium text-2xl text-gray-900">₹899</span>
-                <button onClick={() => buyNow()} className="flex ml-4 text-white bg-red-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-red-600 rounded">Buy Now</button>
-                <button onClick={handleAddToCart} className="flex ml-2 text-white bg-red-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-red-600 rounded">Add to Cart</button>
+                {product.availableQty > 0 && <span className="title-font font-medium text-2xl text-gray-900">₹899</span>}
+                {product.availableQty <= 0 && <span className="title-font font-medium text-xl text-red-800">Out of Stock!</span>}
+                <button disabled={product.availableQty <= 0} onClick={() => buyNow()} className="flex ml-4 text-white bg-red-500 disabled:bg-red-300 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-red-600 rounded">Buy Now</button>
+                <button disabled={product.availableQty <= 0} onClick={handleAddToCart} className="flex ml-2 text-white bg-red-500 disabled:bg-red-300 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-red-600 rounded">Add to Cart</button>
               </div>
               <div className='mt-5 flex space-x-2'>
                 <input type="text" placeholder='Enter your pincode' onChange={onChangePin} value={pin} className='px-2 border-2 border-gray-400 outline-none focus:border-red-500 rounded' />

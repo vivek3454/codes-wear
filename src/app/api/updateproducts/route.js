@@ -5,6 +5,7 @@ export async function POST(Request) {
     const data = await Request.json();
     try {
         await connectToDb();
+        // updating product
         for (const product of data) {
             let p = await Product.findByIdAndUpdate({ _id: product._id,},{
                 title: product.title,

@@ -14,7 +14,7 @@ const Navbar = ({ user, handleLogout }) => {
   const { cart } = useSelector((state) => state.cart);
   const cartRef = useRef();
   const cart1Ref = useRef();
-
+// getting localy stored cart
   useEffect(() => {
     dispatch(getCartFromLocalStorage());
   }, [])
@@ -27,7 +27,7 @@ const Navbar = ({ user, handleLogout }) => {
   const handleClearCart = () => {
     dispatch(clear());
   }
-
+// to close cart when ever clicked outside from cart
   useEffect(() => {
     const closeCart = (e) => {
       if (cartRef.current && !cartRef.current.contains(e.target) && !cart1Ref.current.contains(e.target)) {
@@ -56,7 +56,7 @@ const Navbar = ({ user, handleLogout }) => {
   return (
     <header className="text-gray-600 sticky top-0 z-50 bg-white shadow-md">
       <div className="container mx-auto flex justify-between flex-wrap p-2 flex-col md:flex-row cart-center">
-        <Link href={'/'} className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
+        <Link href={'/'} className="flex title-font font-medium items-center ml-4  text-gray-900">
           <Image className='-mt-1 -mr-7 -ml-5' width={65} height={10} src="/codesWear.png" alt="logo" />
           <span className="ml-3 text-xl">CodesWear.com</span>
         </Link>
@@ -66,9 +66,9 @@ const Navbar = ({ user, handleLogout }) => {
           <Link href={'stickers'} className="mr-5 hover:text-red-500">Stickers</Link>
           <Link href={'/mugs'} className="mr-5 hover:text-red-500">Mugs</Link>
         </nav>
-        <div className='flex items-center relative'>
+        <div className='flex items-center md:relative md:top-0 md:right-0 absolute top-2 right-1'>
           {user.value &&
-            <div ref={cart1Ref} className="cursor-pointer hover:text-red-500 mr-4 text-[26px] absolute top-4 right-1 md:static">
+            <div ref={cart1Ref} className="cursor-pointer hover:text-red-500 mr-4 text-[26px]">
               <MdAccountCircle onMouseOver={() => setToggleDropDown(true)} onMouseLeave={() => setToggleDropDown(false)} />
             </div>
           }
@@ -79,10 +79,10 @@ const Navbar = ({ user, handleLogout }) => {
               <li onClick={handleLogout} className='py-1 hover:text-black cursor-pointer text-sm'>Logout</li>
             </ul>
           </div>}
-          {!user.value && <Link href={'/login'} className="flex mr-4 w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Sign in</Link>}
-          <div ref={cart1Ref} onClick={openCart} className="mr-5 cursor-pointer text-2xl absolute top-3 right-1 md:relative md:top-0 hover:text-red-500">
+          {!user.value && <Link href={'/login'} className="flex mr-4 w-full justify-center rounded-md bg-red-500 px-3 py-1 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Sign in</Link>}
+          <div ref={cart1Ref} onClick={openCart} className="mr-5 flex items-center cursor-pointer text-2xl md:top-0 hover:text-red-500">
             <AiOutlineShoppingCart />
-            {cart?.length > 0 && <span className='absolute top-2 left-4 text-sm bg-red-500 text-black w-5 h-5 flex justify-center items-center font-semibold rounded-full'>{cart?.length}</span>}
+            {cart?.length > 0 && <span className='relative top-1 -left-2 text-xs bg-red-500 text-black w-4 h-4 flex justify-center items-center font-semibold rounded-full'>{cart?.length}</span>}
           </div>
         </div>
       </div>

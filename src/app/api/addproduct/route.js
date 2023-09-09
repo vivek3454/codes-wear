@@ -5,6 +5,7 @@ export async function POST(Request) {
     const data = await Request.json();
     try {
         await connectToDb();
+        // adding product in database
         for (const product of data) {
             let p = new Product({
                 title: product.title,

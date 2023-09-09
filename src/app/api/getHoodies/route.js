@@ -2,11 +2,11 @@ import connectToDb from "@/middleware/db";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 export async function GET(Request) {
-    // let color = ['blue', 'black', 'green', 'orange']
-    // let size = ['L', 'XL', 'M', 'S', 'XXL']
+    
     try {
         await connectToDb();
-        const products = await Product.find({category: 'hoodies'});
+        const products = await Product.find({ category: 'hoodies' });
+        // get category: hoodies data from database , iterate through and store in hoodies object
         let hoodies = {};
         for (const product of products) {
             if (product.title in hoodies) {

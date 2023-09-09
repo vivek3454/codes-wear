@@ -11,6 +11,7 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
+        // add product in cart
         add(state, action) {
             const { slug } = action.payload;
             const product = state.cart?.find(p => p.slug === slug);
@@ -22,6 +23,7 @@ const cartSlice = createSlice({
             }
             localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
+        // remove product from cart
         remove(state, action) {
             const slug = action.payload;
             const product = state.cart?.find(p => p.slug === slug);
@@ -34,11 +36,13 @@ const cartSlice = createSlice({
             }
             localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
+        // clear cart
         clear(state) {
             state.cart = [];
             state.subTotal = 0;
             localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
+        // calculate sub total
         subTotal(state) {
             let total = 0;
             for (const product of state.cart) {
@@ -47,6 +51,7 @@ const cartSlice = createSlice({
             state.subTotal = total;
             localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
         },
+        // get localy saved cart
         getCartFromLocalStorage(state) {
             const localStorageValue = JSON.parse(localStorage.getItem('codesWearShoppingCart'));
             if (localStorageValue) {

@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
     }
   }, [path])
 
-
+  // funtion to logout
   const handleLogout = () => {
     localStorage.removeItem('token');
     setUser({ value: null });

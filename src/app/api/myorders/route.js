@@ -12,7 +12,9 @@ export async function POST(Request) {
             return NextResponse.json({ success: false, message: 'Not authorized' });
         }
         await connectToDb();
+        // verifying jwt token
         const data = verify(token?.value, process.env.JWT_SECRET);
+        // sending users orders in response
         let orders = await Order.find({email: data.email});
         return NextResponse.json({ success: true, orders });
     } catch (error) {

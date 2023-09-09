@@ -13,8 +13,10 @@ export async function POST(Request) {
         if (!user) {
             return NextResponse.json({ success: false, message: 'email is not existed' });
         }
+        // decrypting password
         const originalText = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8)
         if (password === originalText) {
+            // generating jwt token
             const token = sign({ name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: '2d' })
             const cookieOption = {
                 maxAge: 7 * 24 * 60 * 60,

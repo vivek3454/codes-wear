@@ -9,9 +9,11 @@ export async function POST(Request) {
         await connectToDb();
         const { response: { razorpay_order_id, razorpay_payment_id, razorpay_signature }, id } = await Request.json();
         const text = razorpay_order_id + "|" + razorpay_payment_id;
+        // creating crypto hmac
         const generated_signature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(text.toString())
             .digest('hex');
+        // verifying payment
         if (generated_signature === razorpay_signature) {
             const order = await Order.findByIdAndUpdate(id, {
                 paymentInfo: {
@@ -21,6 +23,7 @@ export async function POST(Request) {
                 },
                 status: 'Paid'
             })
+            // decreasing product available quantity after every succesful payment
             for (const product of order.products) {
                 await Product.findOneAndUpdate({slug: product.slug}, {$inc: {availableQty: - product.qty}})
             }
