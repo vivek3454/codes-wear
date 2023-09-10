@@ -7,7 +7,7 @@ import pincodes from "../../../data/pincodes";
 
 export async function POST(Request) {
     try {
-        const { email, checkoutAmount, items, address, phone, pincode } = await Request.json();
+        const { name, email, checkoutAmount, items, address, phone, pincode, district, state } = await Request.json();
 
         // checking pincode is serviceable or not
         if (!Object.keys(pincodes).includes(pincode)) {
@@ -31,7 +31,7 @@ export async function POST(Request) {
         }
         // validating phone number
         if (phone.length !== 10) {
-            return NextResponse.json({ success: false, message: 'Please enter your 10 digit phone number.', isClear: false }, {status: 400});
+            return NextResponse.json({ success: false, message: 'Please enter your 10 digit phone number.', isClear: false }, { status: 400 });
         }
 
         await connectToDb();
@@ -52,6 +52,10 @@ export async function POST(Request) {
                 razorpay_signature: ''
             },
             address,
+            district,
+            state,
+            name,
+            pincode,
             checkoutAmount,
         });
         await myorder.save();

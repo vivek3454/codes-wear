@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
+    name: { type: String, required: true },
     email: { type: String, required: true },
     orderId: { type: String, required: true },
     products: { type: Array },
@@ -19,6 +20,10 @@ const orderSchema = new mongoose.Schema({
         }
     },
     address: { type: String, required: true },
+    district: { type: String, required: true },
+    state: { type: String, required: true },
+    pincode: { type: String, required: true },
+    phone: { type: String },
     checkoutAmount: { type: Number, required: true },
     status: { type: String, default: 'Pending', required: true },
 }, { timestamps: true });
