@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 const Checkout = () => {
-  const [userInfo, setUserInfo] = useState({ name: '', email: '', address: '', city: '', state: '', phone: '' });
+  const [userInfo, setUserInfo] = useState({ name: '', email: '', address: '', district: '', state: '', phone: '' });
   const [pincode, setPincode] = useState('');
   const [isUser, setIsUser] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -23,10 +23,10 @@ const Checkout = () => {
   useEffect(() => {
     dispatch(subTotal());
     const getUserEmail = async () => {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuseremail`);
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`);
       if (data.success) {
         setIsUser(true);
-        setUserInfo({ ...userInfo, email: data.email });
+        setUserInfo({ ...userInfo, email: data?.user?.email });
       }
       else {
         setIsUser(false);
@@ -83,7 +83,7 @@ const Checkout = () => {
   // handle Payment
   const handlePayment = async () => {
     const { data: { order, id } } = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subtotal, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone, pincode }),
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subtotal, name: userInfo.name, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone, pincode, state: userInfo.state, district: userInfo.district }),
       {
         pending: 'Please wait...',
         success: {
@@ -206,7 +206,7 @@ const Checkout = () => {
         {cart.length === 0 && <div className='font-medium text-lg'>Cart is empty</div>}
         {cart.length !== 0 &&
           <div className='flex gap-5 items-center'>
-            <span className='font-bold'>SubTotal: {subtotal}</span>
+            {/* <span className='font-bold'>SubTotal: {subtotal}</span> */}
             <button disabled={isDisabled} onClick={handlePayment} className={`flex text-white border-0 py-1 px-2 focus:outline-none rounded ${isDisabled ? 'bg-red-300' : 'bg-red-500 hover:bg-red-600'}`}><BsFillBagCheckFill className='m-1' />Pay {subtotal}</button>
           </div>
         }

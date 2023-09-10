@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { verify } from "jsonwebtoken";
+import User from "@/models/User";
 
 export async function GET(Request) {
     // get token from cookies
@@ -9,6 +10,11 @@ export async function GET(Request) {
         return NextResponse.json({ success: false });
     }
     // send user email in response
-    const { email } = await verify(token.value, process.env.JWT_SECRET);
-    return NextResponse.json({success: true, email });
+    try {
+        const { email } = verify(token.value, process.env.JWT_SECRET);
+        let user = await User.findOne({ email: email });
+        return NextResponse.json({ success: true, user });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
 }
