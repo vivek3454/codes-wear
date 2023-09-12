@@ -17,10 +17,10 @@ export async function POST(Request) {
                 color: product.color,
                 price: product.price,
                 availableQty: product.availableQty,
-            })
+            });
         }
         
-        return NextResponse.json({ message: 'Product updated successfully' }, { status: 200 });
+        return NextResponse.json({ message: "Product updated successfully" }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ message: error.message }, { status: 500 });

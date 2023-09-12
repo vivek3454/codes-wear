@@ -9,21 +9,21 @@ export async function POST(Request) {
 
         const { newPassword, currentPassword } = await Request.json();
         // get token from cookies
-        const token = cookies().get('codesWearJwt');
+        const token = cookies().get("codesWearJwt");
         if (!token) {
-            return NextResponse.json({ success: false });
+            return NextResponse.json({ success: false }, { status: 401 });
         }
         const { email } = await verify(token.value, process.env.JWT_SECRET);
         const user = await User.findOne({ email });
         // decrypting password
-        const originalPassword = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8)
+        const originalPassword = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8);
         if (originalPassword !== currentPassword) {
-            return NextResponse.json({ success: false, message: 'Entered password is wrong. Please enter right password' });
+            return NextResponse.json({ success: false, message: "Entered current password is wrong." }, { status: 400 });
         }
         // update user password
         await User.findOneAndUpdate({ email }, { password: CryptoJS.AES.encrypt(newPassword, process.env.AES_SECRET).toString() });
-        return NextResponse.json({ success: true, message: 'Password updated successfully' });
+        return NextResponse.json({ success: true, message: "Password updated successfully" }, { status: 200 });
     } catch (error) {
-        console.log(error.message);
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 }

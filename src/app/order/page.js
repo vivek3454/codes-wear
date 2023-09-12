@@ -1,10 +1,10 @@
-import connectToDb from '@/middleware/db'
-import Order from '@/models/Order'
-import React from 'react'
+import connectToDb from "@/middleware/db";
+import Order from "@/models/Order";
+import React from "react";
 
 const MyOrder = async ({ searchParams }) => {
   const [order] = await fetchSingleOrder(searchParams?.id);
-  const date = new Date(order.createdAt).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const date = new Date(order?.createdAt).toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
     <section className="text-gray-600 body-font overflow-hidden">
@@ -15,7 +15,7 @@ const MyOrder = async ({ searchParams }) => {
             <h1 className="text-gray-900 sm:text-[29px] text-xl title-font font-medium mb-4">Order Id: {searchParams?.id}</h1>
             <p className="leading-relaxed">Yayy! Your order has been successfully placed.</p>
             <p className="leading-relaxed">Order placed on: {date}</p>
-            <p className="leading-relaxed mb-4">Your payment status is <span className={`font-bold ${order?.status === 'Paid' ? 'text-green-500' : 'text-yellow-500'}`}>{order?.status}</span>.</p>
+            <p className="leading-relaxed mb-4">Your payment status is <span className={`font-bold ${order?.status === "Paid" ? "text-green-500" : "text-yellow-500"}`}>{order?.status}</span>.</p>
             <div className="flex mb-4">
               <a className="flex-grow py-2 text-lg px-1">Item Description</a>
               <a className="flex-grow py-2 text-lg px-1">Quantity</a>
@@ -32,7 +32,7 @@ const MyOrder = async ({ searchParams }) => {
             }
             <div className="flex flex-col">
               <span className="title-font my-8 font-medium text-[22px] text-gray-900">SubTotal: ₹{order?.checkoutAmount}</span>
-              <div className='my-6'>
+              <div className="my-6">
                 <button className="flex ml-0 text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
                   Track Order
                 </button>
@@ -43,14 +43,14 @@ const MyOrder = async ({ searchParams }) => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 // fetch singleOrder data using server side rendering
 const fetchSingleOrder = async (id) => {
   await connectToDb();
-  let order = await Order.find({ orderId: id })
+  let order = await Order.find({ orderId: id });
   return order;
-}
+};
 
-export default MyOrder
+export default MyOrder;

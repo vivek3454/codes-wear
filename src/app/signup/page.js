@@ -1,27 +1,54 @@
-'use client'
-import axios from 'axios';
-import Link from 'next/link'
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify';
+"use client";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 
 const Signup = () => {
-  const [userInfo, setUserInfo] = useState({ name: '', email: '', password: '' });
+  const [userInfo, setUserInfo] = useState({ name: "", email: "", password: "" });
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      router.push('/');
+    if (localStorage.getItem("token")) {
+      router.push("/");
     }
-  }, [])
+  }, []);
 
   // function to sign up
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo);
-    if (res.data.success) {
-      toast.success('Your account created successfully', {
+    try {
+
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo);
+      if (res?.data?.success) {
+        toast.success("Your account created successfully", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        router.push("/");
+      }
+      else {
+        toast.error(res?.data?.message, {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message, {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -31,21 +58,8 @@ const Signup = () => {
         progress: undefined,
         theme: "light",
       });
-      router.push('/')
     }
-    else {
-      toast.error(res.data.message, {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-  }
+  };
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -88,7 +102,7 @@ const Signup = () => {
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

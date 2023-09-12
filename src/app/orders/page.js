@@ -1,22 +1,38 @@
-'use client';
-import Loading from '@/components/Loading';
-import axios from 'axios';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+"use client";
+import Loading from "@/components/Loading";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const Orders = () => {
   const router = useRouter();
-  const [orders, setOrders] = useState([])
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     // function to fetch users all orders
     const fetchOrders = async () => {
-      let { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/myorders`);
-      if (!data.success) {
-        router.push('/');
-        toast.error(data.message, {
+      try {
+        let { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/myorders`);
+        if (!data?.success) {
+          router.push("/");
+          toast.error(data?.message, {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }
+        else {
+          setOrders(data?.orders);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message, {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -27,17 +43,14 @@ const Orders = () => {
           theme: "light",
         });
       }
-      else {
-        setOrders(data.orders);
-      }
-    }
+    };
 
     fetchOrders();
-  }, [])
+  }, []);
   return (
-    <div className='container mx-auto px-5 min-h-[86vh]'>
-      <h1 className='font-bold text-xl py-10 px-2 text-center'>My Orders</h1>
-    {orders.length === 0 && <Loading />}
+    <div className="container mx-auto px-5 min-h-[86vh]">
+      <h1 className="font-bold text-xl py-10 px-2 text-center">My Orders</h1>
+      {orders.length === 0 && <Loading />}
       {orders.length > 0 && <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase border-b dark:border-gray-700 bg-gray-50">
@@ -79,7 +92,7 @@ const Orders = () => {
       </div>}
 
     </div>
-  )
-}
+  );
+};
 
-export default Orders
+export default Orders;

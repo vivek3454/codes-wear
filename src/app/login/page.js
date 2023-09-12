@@ -1,19 +1,19 @@
-'use client'
-import axios from 'axios';
-import Link from 'next/link'
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify';
+"use client";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const [userInfo, setUserInfo] = useState({ email: '', password: '' });
+  const [userInfo, setUserInfo] = useState({ email: "", password: "" });
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      router.push('/');
+    if (localStorage.getItem("token")) {
+      router.push("/");
     }
-  }, [])
+  }, []);
 
 // function to login
   const handleSubmit = async (e) => {
@@ -21,14 +21,14 @@ const Login = () => {
     const res = await toast.promise(
       axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/login`, userInfo),
       {
-        pending: 'Please wait...',
+        pending: "Please wait...",
         success: {
           render() {
-            router.push('/');
-            return 'You are successfully logged in'
+            router.push("/");
+            return "You are successfully logged in";
           },
         },
-        error: 'Please try again',
+        error: "Please try again",
       },
       {
         position: "top-center",
@@ -40,9 +40,9 @@ const Login = () => {
         progress: undefined,
         theme: "light",
       }
-    )
-    localStorage.setItem('token', res.data.token);
-    if (!res.data.success) {
+    );
+    localStorage.setItem("token", res?.data?.token);
+    if (!res?.data?.success) {
       toast.error(res.data.message, {
         position: "top-center",
         autoClose: 1000,
@@ -54,7 +54,7 @@ const Login = () => {
         theme: "light",
       });
     }
-  }
+  };
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -95,7 +95,7 @@ const Login = () => {
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

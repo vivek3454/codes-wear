@@ -1,9 +1,9 @@
-import Image from 'next/image'
+import Image from "next/image";
 
 export default function Home() {
   return (
     <main className="">
-      <Image className='' width={1450} height={500} src="/home.webp" alt="logo" />
+      <Image className="" width={1450} height={500} src="/home.webp" alt="logo" />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-24 mx-auto">
           <div className="flex flex-wrap w-full mb-20 flex-col items-center text-center">
@@ -84,5 +84,5 @@ export default function Home() {
         </div>
       </section>
     </main>
-  )
+  );
 }

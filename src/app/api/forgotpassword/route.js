@@ -22,6 +22,7 @@ export async function POST(Request) {
                 }
             };
             generateToken();
+            // save in database
             let forgot = new Forgot({
                 email: req?.email,
                 token

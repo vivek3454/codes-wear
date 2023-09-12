@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -25,8 +25,8 @@ const orderSchema = new mongoose.Schema({
     pincode: { type: String, required: true },
     phone: { type: String },
     checkoutAmount: { type: Number, required: true },
-    status: { type: String, default: 'Pending', required: true },
+    status: { type: String, default: "Pending", required: true },
 }, { timestamps: true });
 
-mongoose.models = {}
-export default mongoose.model('Order', orderSchema)
+mongoose.models = {};
+export default mongoose.model("Order", orderSchema);

@@ -1,6 +1,6 @@
 "use client";
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     cart: [],
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const cartSlice = createSlice({
-    name: 'cart',
+    name: "cart",
     initialState,
     reducers: {
         // add product in cart
@@ -21,7 +21,7 @@ const cartSlice = createSlice({
             else {
                 state.cart?.push(action.payload);
             }
-            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
+            localStorage.setItem("codesWearShoppingCart", JSON.stringify(state.cart));
         },
         // remove product from cart
         remove(state, action) {
@@ -34,13 +34,13 @@ const cartSlice = createSlice({
                 state.cart = state.cart.filter((item) => item.slug !== slug);
                 state.subTotal = 0;
             }
-            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
+            localStorage.setItem("codesWearShoppingCart", JSON.stringify(state.cart));
         },
         // clear cart
         clear(state) {
             state.cart = [];
             state.subTotal = 0;
-            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
+            localStorage.setItem("codesWearShoppingCart", JSON.stringify(state.cart));
         },
         // calculate sub total
         subTotal(state) {
@@ -49,17 +49,17 @@ const cartSlice = createSlice({
                 total += product.qty * product.price;
             }
             state.subTotal = total;
-            localStorage.setItem('codesWearShoppingCart', JSON.stringify(state.cart));
+            localStorage.setItem("codesWearShoppingCart", JSON.stringify(state.cart));
         },
         // get localy saved cart
         getCartFromLocalStorage(state) {
-            const localStorageValue = JSON.parse(localStorage.getItem('codesWearShoppingCart'));
+            const localStorageValue = JSON.parse(localStorage.getItem("codesWearShoppingCart"));
             if (localStorageValue) {
                 state.cart = localStorageValue;
             }
         }
     }
-})
+});
 
 export const { add, remove, clear, subTotal, getCartFromLocalStorage } = cartSlice.actions;
 export default cartSlice.reducer;

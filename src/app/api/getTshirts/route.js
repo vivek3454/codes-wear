@@ -6,7 +6,7 @@ export async function GET(Request) {
     try {
         await connectToDb();
         // get category: tshirts data from database , iterate through and store in tshirts object
-        const products = await Product.find({ category: 'tshirts' });
+        const products = await Product.find({ category: "tshirts" });
         let tshirts = {};
         for (const product of products) {
             if (product.title in tshirts) {
