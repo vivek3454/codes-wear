@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
+  const [showHidePassword, setShowHidePassword] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,9 +17,59 @@ const Login = () => {
     }
   }, []);
 
-// function to login
+  // function to show or hide password
+  const handlePasswordShowHide = () => {
+    setShowHidePassword(!showHidePassword);
+  };
+
+  // function to login
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // checking input fields are empty
+    if (!userInfo.email || !userInfo.password) {
+      toast.warn("All fields are required", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
+    // email validation using regex
+    if (!userInfo.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+      toast.warn("Invalid email id", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
+    // password validation using regex
+    if (!userInfo.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/)) {
+      toast.warn("Minimum password length should be 8 with Uppercase, Lowercase, Number and Symbol", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
     const res = await toast.promise(
       axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/login`, userInfo),
       {
@@ -64,7 +116,7 @@ const Login = () => {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-6" action="#" method="POST">
+        <form noValidate={true} onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
             <div className="mt-2">
@@ -79,8 +131,11 @@ const Login = () => {
                 <Link href="/forgot" className="font-semibold text-red-500 hover:text-red-600">Forgot password?</Link>
               </div>
             </div>
-            <div className="mt-2">
-              <input onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })} value={userInfo.password} id="password" name="password" type="password" autoComplete="current-password" required className="block outline-none px-4 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6" />
+            <div className="mt-2 relative">
+              <input onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })} value={userInfo.password} id="password" name="password" type={`${showHidePassword ? "text" : "password"}`} autoComplete="current-password" required className="block outline-none px-4 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6" />
+              <span onClick={handlePasswordShowHide} className="absolute right-3 top-[10px] cursor-pointer">
+                {showHidePassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
           </div>
 

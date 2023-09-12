@@ -3,15 +3,17 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 
 const MyAccount = () => {
   const [userInfo, setUserInfo] = useState({ name: "", email: "", address: "", pincode: "", phone: "", currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [showHidePassword, setShowHidePassword] = useState({ currentPassword: false, newPassword: false, confirmPassword: false });
   const router = useRouter();
   const getUserData = async () => {
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`);
       if (data.success) {
-        setUserInfo({ ...userInfo, name: data?.user?.name, email: data?.user?.email, address: data?.user?.address, pincode: data?.user?.pincode, phone: data?.user?.phone });
+        setUserInfo({ ...userInfo, name: data?.user?.name, email: data?.user?.email, address: (data?.user?.address) ? data?.user?.address : "", pincode: (data?.user?.pincode) ? data?.user?.pincode : "", phone: (data?.user?.phone) ? data?.user?.phone : "" });
       }
     } catch (error) {
       toast.error(error?.response?.data?.message, {
@@ -32,6 +34,19 @@ const MyAccount = () => {
     }
     getUserData();
   }, []);
+
+  // handle password show or hide
+  const handlePasswordShowHide = (e) => {
+    if (e.currentTarget.parentElement.id === "currentPassword") {
+      setShowHidePassword({ ...showHidePassword, currentPassword: !showHidePassword.currentPassword });
+    }
+    else if (e.currentTarget.parentElement.id === "newPassword") {
+      setShowHidePassword({ ...showHidePassword, newPassword: !showHidePassword.newPassword });
+    }
+    else if (e.currentTarget.parentElement.id === "confirmPassword") {
+      setShowHidePassword({ ...showHidePassword, confirmPassword: !showHidePassword.confirmPassword });
+    }
+  };
 
   // handle user input
   const handleOnchange = async (e) => {
@@ -149,17 +164,26 @@ const MyAccount = () => {
         <h2 className="font-semibold text-xl mt-8 mb-4">2. Change Password</h2>
         <form>
           <div className="mx-auto flex flex-col md:flex-row my-4">
-            <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
+            <div id="currentPassword" className="px-2 relative flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
               <label htmlFor="pincode" className="text-gray-500">Current Password</label>
-              <input autoComplete="true" onChange={handleOnchange} value={userInfo.currentPassword} type="password" name="currentPassword" id="currentPassword" className="px-2 h-10 rounded border-2 border-gray-300" />
+              <input autoComplete="true" onChange={handleOnchange} value={userInfo.currentPassword} type={`${showHidePassword.currentPassword ? "text" : "password"}`} name="currentPassword" id="currentPassword" className="px-2 h-10 rounded border-2 border-gray-300" />
+              <span onClick={handlePasswordShowHide} className="absolute right-5 top-[36px] cursor-pointer">
+                {showHidePassword.currentPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
-            <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
+            <div id="newPassword" className="px-2 relative flex flex-col justify-center w-full md:w-1/2">
               <label htmlFor="password" className="text-gray-500">New Password</label>
-              <input autoComplete="true" onChange={handleOnchange} value={userInfo.newPassword} type="password" name="newPassword" id="newPassword" className="px-2 h-10 rounded border-2 border-gray-300" />
+              <input autoComplete="true" onChange={handleOnchange} value={userInfo.newPassword} type={`${showHidePassword.newPassword ? "text" : "password"}`} name="newPassword" id="newPassword" className="px-2 h-10 rounded border-2 border-gray-300" />
+              <span onClick={handlePasswordShowHide} className="absolute right-5 top-[36px] cursor-pointer">
+                {showHidePassword.newPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
-            <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
+            <div id="confirmPassword" className="px-2 relative flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
               <label htmlFor="changePassword" className="text-gray-500">Confirm New Password</label>
-              <input autoComplete="true" onChange={handleOnchange} value={userInfo.confirmPassword} type="password" name="confirmPassword" id="confirmPassword" className="px-2 h-10 rounded border-2 border-gray-300" />
+              <input autoComplete="true" onChange={handleOnchange} value={userInfo.confirmPassword} type={`${showHidePassword.confirmPassword ? "text" : "password"}`} name="confirmPassword" id="confirmPassword" className="px-2 h-10 rounded border-2 border-gray-300" />
+              <span onClick={handlePasswordShowHide} className="absolute right-5 top-[36px] cursor-pointer">
+                {showHidePassword.confirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
           </div>
         </form>

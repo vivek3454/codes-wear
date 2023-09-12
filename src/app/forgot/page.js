@@ -75,19 +75,19 @@ const Forgot = ({ _, searchParams }) => {
   const resetPassword = async (e) => {
     e.preventDefault();
     // password validation using regex
-    // if (!newPassword.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/)) {
-    //   toast.warn("Minimum password length should be 8 with Uppercase, Lowercase, Number and Symbol", {
-    //     position: "top-center",
-    //     autoClose: 1000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "light",
-    //   });
-    //   return;
-    // }
+    if (!newPassword.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/)) {
+      toast.warn("Minimum password length should be 8 with Uppercase, Lowercase, Number and Symbol", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     if (newPassword && confirmNewPassword && newPassword === confirmNewPassword) {
       await toast.promise(
         axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/forgotpassword`, { token: searchParams.token, newPassword, sendMail: false }),

@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 
 
 const Signup = () => {
   const [userInfo, setUserInfo] = useState({ name: "", email: "", password: "" });
+  const [showHidePassword, setShowHidePassword] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -16,14 +18,72 @@ const Signup = () => {
     }
   }, []);
 
+  // function to show or hide password
+  const handlePasswordShowHide = () => {
+    setShowHidePassword(!showHidePassword);
+  };
+
   // function to sign up
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
+    // checking input fields are empty
+    if (!userInfo.name || !userInfo.email || !userInfo.password) {
+      toast.warn("All fields are required", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
 
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo);
-      if (res?.data?.success) {
-        toast.success("Your account created successfully", {
+    // email validation using regex
+    if (!userInfo.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+      toast.warn("Invalid email id", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
+    // password validation using regex
+    if (!userInfo.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/)) {
+      toast.warn("Minimum password length should be 8 with Uppercase, Lowercase, Number and Symbol", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    try {
+      const res = await toast.promise(
+        axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo),
+        {
+          pending: "Please wait...",
+          success: {
+            render() {
+              router.push("/login");
+              return "Your account created successfully";
+            },
+          },
+          error: "Please try again",
+        },
+        {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -32,21 +92,9 @@ const Signup = () => {
           draggable: true,
           progress: undefined,
           theme: "light",
-        });
-        router.push("/");
-      }
-      else {
-        toast.error(res?.data?.message, {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+        }
+      );
+
     } catch (error) {
       toast.error(error?.response?.data?.message, {
         position: "top-center",
@@ -68,7 +116,7 @@ const Signup = () => {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-6" action="#" method="POST">
+        <form noValidate={true} onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">Name</label>
             <div className="mt-2">
@@ -86,8 +134,11 @@ const Signup = () => {
             <div className="flex items-center">
               <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
             </div>
-            <div className="mt-2">
-              <input onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })} value={userInfo.password} id="password" name="password" type="password" autoComplete="current-password" required className="block px-3 outline-none w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6" />
+            <div className="mt-2 relative">
+              <input onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })} value={userInfo.password} id="password" name="password" type={`${showHidePassword ? "text" : "password"}`} autoComplete="current-password" required className="block px-3 outline-none w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6" />
+              <span onClick={handlePasswordShowHide} className="absolute right-3 top-[10px] cursor-pointer">
+                {showHidePassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
           </div>
 
