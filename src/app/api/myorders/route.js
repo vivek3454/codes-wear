@@ -5,9 +5,10 @@ import { verify } from "jsonwebtoken";
 import { cookies } from "next/headers";
 
 
-export async function POST(Request) {
+export async function GET(Request) {
     try {
         const token = cookies().get("codesWearJwt");
+        console.log(token);
         if (!token) {
             return NextResponse.json({ success: false, message: "Not authorized" }, { status: 401 });
         }

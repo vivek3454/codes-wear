@@ -1,35 +1,32 @@
-"use client";
 import Loading from "@/components/Loading";
 import ProductCard from "@/components/ProductCard";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const Hoodies = () => {
-  const [hoodies, setHoodies] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+let loading = true;
+const getAllhoodies = async () => {
+  try {
+    const {data} = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getHoodies`);
+    loading = false;
+    return data;
+  } catch (error) {
+    loading = false;
+    toast.error(error?.response?.data?.message, {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+};
+
+const Hoodies = async () => {
   // getting all hoodies and storing in state
-  useEffect(() => {
-    const getAllhoodies = async () => {
-      try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getHoodies`);
-        setHoodies(res.data.hoodies);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        toast.error(error?.response?.data?.message, {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-    };
-    getAllhoodies();
-  }, []);
+    const {hoodies} = await getAllhoodies();
 
   return (
     <section className="text-gray-600 container mx-auto">
