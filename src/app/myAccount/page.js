@@ -29,9 +29,6 @@ const MyAccount = () => {
     }
   };
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      router.push("/");
-    }
     getUserData();
   }, []);
 
