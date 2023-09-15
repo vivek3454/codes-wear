@@ -69,7 +69,7 @@ const Checkout = () => {
         try {
           let { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
           if (Object.keys(data).includes(e.target.value)) {
-            setUserInfo({ ...userInfo, city: data[e.target.value][0], state: data[e.target.value][1] });
+            setUserInfo({ ...userInfo, district: data[e.target.value][0], state: data[e.target.value][1] });
           }
         } catch (error) {
           toast.error(error?.response?.data?.message, {
@@ -85,7 +85,7 @@ const Checkout = () => {
         }
       }
       else {
-        setUserInfo((prev) => { return { ...prev, city: "", state: "" }; });
+        setUserInfo((prev) => { return { ...prev, district: "", state: "" }; });
       }
     }
     else {
@@ -96,7 +96,7 @@ const Checkout = () => {
 
   // change pay button disabled state
   useEffect(() => {
-    if (userInfo.name && userInfo.email && userInfo.city && userInfo.state && userInfo.phone && pincode) {
+    if (userInfo.name && userInfo.email && userInfo.district && userInfo.state && userInfo.phone && pincode) {
       setIsDisabled(false);
     }
     else {
@@ -221,8 +221,8 @@ const Checkout = () => {
       </div>
       <div className="mx-auto flex flex-col md:flex-row my-4">
         <div className="px-2 flex flex-col mt-4 md:mt-0 justify-center w-full md:w-1/2">
-          <label htmlFor="city" className="text-gray-500">City</label>
-          <input disabled={true} onChange={handleOnchange} value={userInfo.city} type="text" name="city" id="city" className="px-2 h-10 rounded border-2 border-gray-300" />
+          <label htmlFor="district" className="text-gray-500">District</label>
+          <input disabled={true} onChange={handleOnchange} value={userInfo.district} type="text" name="district" id="district" className="px-2 h-10 rounded border-2 border-gray-300" />
         </div>
         <div className="px-2 flex flex-col justify-center w-full md:w-1/2">
           <label htmlFor="state" className="text-gray-500">State</label>
