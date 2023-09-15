@@ -91,7 +91,6 @@ const Login = () => {
         theme: "light",
       }
     );
-    localStorage.setItem("token", res?.data?.token);
   };
 
   return (

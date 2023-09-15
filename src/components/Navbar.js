@@ -8,6 +8,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { clear, add, remove, subTotal, getCartFromLocalStorage } from "@/redux/CartSlice";
 import { useRouter, usePathname } from "next/navigation";
+import axios from "axios";
 
 const Navbar = () => {
   const path = usePathname();
@@ -26,10 +27,14 @@ const Navbar = () => {
 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setUser({ value: token });
-    }
+    (async () => {
+      try {
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`);
+        setUser({ value: data?.user });
+      } catch (error) {
+        setUser({ value: null });
+      }
+    })();
   }, [path]);
 
   const openCart = () => {
@@ -59,10 +64,14 @@ const Navbar = () => {
   }, []);
 
   // funtion to logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setUser({ value: null });
-    router.push("/");
+  const handleLogout = async () => {
+    try {
+      await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/logout`);
+      setUser({ value: null });
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAddToCart = (slug) => {
