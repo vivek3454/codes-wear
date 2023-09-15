@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -6,31 +7,46 @@ import { BsFillBagCheckFill } from "react-icons/bs";
 import { MdAccountCircle } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { clear, add, remove, subTotal, getCartFromLocalStorage } from "@/redux/CartSlice";
+import { useRouter, usePathname } from "next/navigation";
 
-const Navbar = ({ user, handleLogout }) => {
+const Navbar = () => {
+  const path = usePathname();
+  const router = useRouter();
   const dispatch = useDispatch();
+  const [user, setUser] = useState({ value: null });
   const [isOpen, setIsOpen] = useState(false);
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const { cart } = useSelector((state) => state.cart);
   const cartRef = useRef();
   const cart1Ref = useRef();
-// getting localy stored cart
+  // getting localy stored cart
   useEffect(() => {
     dispatch(getCartFromLocalStorage());
   }, []);
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setUser({ value: token });
+    }
+  }, [path]);
+
   const openCart = () => {
     setIsOpen(true);
   };
+
   const closeCart = () => {
     setIsOpen(false);
   };
+
   const handleClearCart = () => {
     dispatch(clear());
   };
-// to close cart when ever clicked outside from cart
+  // to close cart when ever clicked outside from cart
   useEffect(() => {
     const closeCart = (e) => {
-      if (cartRef?.current && !cartRef?.current.contains(e.target) && !cart1Ref?.current.contains(e.target)) {
+      if (cartRef?.current && !cartRef?.current?.contains(e.target) && !cart1Ref?.current?.contains(e.target)) {
         setIsOpen(false);
       }
     };
@@ -42,7 +58,12 @@ const Navbar = ({ user, handleLogout }) => {
     };
   }, []);
 
-
+  // funtion to logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser({ value: null });
+    router.push("/");
+  };
 
   const handleAddToCart = (slug) => {
     dispatch(add({ slug }));
@@ -63,7 +84,6 @@ const Navbar = ({ user, handleLogout }) => {
         <nav className="flex flex-wrap items-center text-base justify-center">
           <Link href={"/tshirts"} className="mr-5 hover:text-red-500">Tshirts</Link>
           <Link href={"/hoodies"} className="mr-5 hover:text-red-500">Hoodies</Link>
-          <Link href={"stickers"} className="mr-5 hover:text-red-500">Stickers</Link>
           <Link href={"/mugs"} className="mr-5 hover:text-red-500">Mugs</Link>
         </nav>
         <div className="flex items-center md:relative md:top-0 md:right-0 absolute top-2 right-1">
