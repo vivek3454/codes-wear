@@ -70,33 +70,23 @@ const Signup = () => {
       });
       return;
     }
-    try {
-      const res = await toast.promise(
-        axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo),
-        {
-          pending: "Please wait...",
-          success: {
-            render() {
-              router.push("/login");
-              return "Your account created successfully";
-            },
+    const res = await toast.promise(
+      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo),
+      {
+        pending: "Please wait...",
+        success: {
+          render() {
+            router.push("/login");
+            return "Your account created successfully";
           },
-          error: "Please try again",
         },
-        {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        }
-      );
-
-    } catch (error) {
-      toast.error(error?.response?.data?.message, {
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message;
+          },
+        },
+      },
+      {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -105,8 +95,9 @@ const Signup = () => {
         draggable: true,
         progress: undefined,
         theme: "light",
-      });
-    }
+      }
+    );
+
   };
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">

@@ -2,7 +2,7 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 
@@ -10,12 +10,6 @@ const Login = () => {
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
   const [showHidePassword, setShowHidePassword] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      router.push("/");
-    }
-  }, []);
 
   // function to show or hide password
   const handlePasswordShowHide = () => {
@@ -80,7 +74,11 @@ const Login = () => {
             return "You are successfully logged in";
           },
         },
-        error: "Please try again",
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message;
+          },
+        },
       },
       {
         position: "top-center",
@@ -94,18 +92,6 @@ const Login = () => {
       }
     );
     localStorage.setItem("token", res?.data?.token);
-    if (!res?.data?.success) {
-      toast.error(res.data.message, {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
   };
 
   return (
