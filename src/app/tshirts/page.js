@@ -1,41 +1,50 @@
 import ProductCard from "@/components/ProductCard";
-import axios from "axios";
+import connectToDb from "@/middleware/db";
+import Product from "@/models/Product";
 import React from "react";
-import Loading from "@/components/Loading";
 
-let loading = true;
 const getAlltshirts = async () => {
   try {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getTshirts`);
-    loading = false;
-   return data;
+    await connectToDb();
+    // get category: tshirts data from database , iterate through and store in tshirts object
+    const products = await Product.find({ category: "Tshirt" });
+    let tshirts = {};
+    for (const product of products) {
+      if (product.title in tshirts) {
+        if (!tshirts[product.title].color.includes(product.color) && product.availableQty > 0) {
+          tshirts[product.title].color.push(product.color);
+        }
+        if (!tshirts[product.title].size.includes(product.size) && product.availableQty > 0) {
+          tshirts[product.title].size.push(product.size);
+        }
+      }
+      else {
+        tshirts[product.title] = JSON.parse(JSON.stringify(product));
+        if (product.availableQty > 0) {
+          tshirts[product.title].color = [product.color];
+          tshirts[product.title].size = [product.size];
+        }
+        else {
+          tshirts[product.title].color = [];
+          tshirts[product.title].size = [];
+        }
+      }
+    }
+    return tshirts;
+
   } catch (error) {
-    loading = false;
-    toast.error(error?.response?.data?.message, {
-      position: "top-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+    console.log(error.message);
+
   }
 };
 
 const Tshirts = async () => {
   // getting all tshirts and storing in state
-  const {tshirts} = await  getAlltshirts();
+  const tshirts = await  getAlltshirts();
 
   return (
     <section className="text-gray-600 container mx-auto">
        <div className="px-5 py-24  mx-auto">
-            {Object.keys(tshirts).length === 0 && loading && <Loading />}
-            {Object.keys(tshirts).length === 0 && !loading &&
-                <div className="text-xl font-semibold h-[70vh] flex justify-center items-center">
-                    Currently tshirts are not available
-                </div>}
             {Object.keys(tshirts).length > 0 && <div className="flex flex-wrap justify-center -m-4">
                 {Object.keys(tshirts).map((product, i) => (
                     <ProductCard key={i} {...tshirts[product]} />
