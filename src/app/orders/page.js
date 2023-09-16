@@ -1,6 +1,6 @@
 "use client";
 import Loading from "@/components/Loading";
-import axios from "axios";
+import axiosInstance from "@/helpers/axiosInstance";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -14,7 +14,7 @@ const Orders = () => {
     // function to fetch users all orders
     const fetchOrders = async () => {
       try {
-        let { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/myorders`);
+        let { data } = await axiosInstance.post("/api/myorders");
         if (!data?.success) {
           router.push("/");
           toast.error(data?.message, {

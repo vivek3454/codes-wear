@@ -1,9 +1,9 @@
 "use client";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
+import axiosInstance from "@/helpers/axiosInstance";
 
 const MyAccount = () => {
   const [userInfo, setUserInfo] = useState({ name: "", email: "", address: "", pincode: "", phone: "", currentPassword: "", newPassword: "", confirmPassword: "" });
@@ -11,7 +11,7 @@ const MyAccount = () => {
   const router = useRouter();
   const getUserData = async () => {
     try {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`);
+      const { data } = await axiosInstance.get("/api/getuser");
       if (data.success) {
         setUserInfo({ ...userInfo, name: data?.user?.name, email: data?.user?.email, address: (data?.user?.address) ? data?.user?.address : "", pincode: (data?.user?.pincode) ? data?.user?.pincode : "", phone: (data?.user?.phone) ? data?.user?.phone : "" });
       }
@@ -53,7 +53,7 @@ const MyAccount = () => {
   // function to update user information
   const updateUserInfo = async () => {
     await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/updateuser`, { name: userInfo.name, address: userInfo.address, pincode: userInfo.pincode, phone: userInfo.phone }),
+      axiosInstance.post("/api/updateuser", { name: userInfo.name, address: userInfo.address, pincode: userInfo.pincode, phone: userInfo.phone }),
       {
         pending: "Please wait...",
         success: {
@@ -85,7 +85,7 @@ const MyAccount = () => {
   const updateUserPassword = async () => {
     if (userInfo.newPassword && userInfo.confirmPassword && userInfo.newPassword === userInfo.confirmPassword) {
       await toast.promise(
-        axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/updateuserpassword`, { newPassword: userInfo.newPassword, currentPassword: userInfo.currentPassword }),
+        axiosInstance.post("/api/updateuserpassword", { newPassword: userInfo.newPassword, currentPassword: userInfo.currentPassword }),
         {
           pending: "Please wait...",
           success: {

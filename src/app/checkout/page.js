@@ -1,6 +1,5 @@
 "use client";
 import { add, remove, subTotal, clear } from "@/redux/CartSlice";
-import axios from "axios";
 import Script from "next/script";
 import React, { useEffect, useState } from "react";
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
@@ -8,6 +7,7 @@ import { BsFillBagCheckFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import axiosInstance from "@/helpers/axiosInstance";
 
 const Checkout = () => {
   const [userInfo, setUserInfo] = useState({ name: "", email: "", address: "", district: "", state: "", phone: "" });
@@ -24,7 +24,7 @@ const Checkout = () => {
     dispatch(subTotal());
     const getUserEmail = async () => {
       try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`);
+        const { data } = await axiosInstance.get("/api/getuser");
         if (data.success) {
           setIsUser(true);
           setUserInfo({ ...userInfo, email: data?.user?.email });
@@ -67,7 +67,7 @@ const Checkout = () => {
       setPincode(e.target.value);
       if (e.target.value.length === 6) {
         try {
-          let { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
+          let { data } = await axiosInstance.get("/api/pincode");
           if (Object.keys(data).includes(e.target.value)) {
             setUserInfo({ ...userInfo, district: data[e.target.value][0], state: data[e.target.value][1] });
           }
@@ -108,7 +108,7 @@ const Checkout = () => {
   // handle Payment
   const handlePayment = async () => {
     const { data: { order, id } } = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/payment`, { checkoutAmount: subtotal, name: userInfo.name, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone, pincode, state: userInfo.state, district: userInfo.district }),
+      axiosInstance.post("/api/payment", { checkoutAmount: subtotal, name: userInfo.name, email: userInfo.email, items: cart, address: userInfo.address, phone: userInfo.phone, pincode, state: userInfo.state, district: userInfo.district }),
       {
         pending: "Please wait...",
         success: {
@@ -124,7 +124,7 @@ const Checkout = () => {
                 order_id: order.id,
                 handler: async function (response) {
                   try {
-                    const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/verify`, { response, id });
+                    const { data } = await axiosInstance.post("/api/verify", { response, id });
                     if (data?.success) {
                       localStorage.removeItem("productCart");
                       router.push(`order?id=${order.id}`);

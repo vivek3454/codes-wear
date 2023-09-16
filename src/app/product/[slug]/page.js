@@ -1,11 +1,11 @@
 import React from "react";
-import axios from "axios";
 import Loading from "@/components/Loading";
 import ProductDetailComponent from "@/components/ProductDetailComponent";
+import axiosInstance from "@/helpers/axiosInstance";
 
 let loading = true;
 const getProduct = async (slug) => {
-  const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/getproduct`, { slug });
+  const { data } = await axiosInstance.post("/api/getproduct", { slug });
   return data;
 };
 

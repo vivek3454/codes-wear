@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { add, clear } from "@/redux/CartSlice";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axiosInstance from "@/helpers/axiosInstance";
 
 const ProductDetailComponent = ({ data, slug, loading }) => {
     const router = useRouter();
@@ -23,7 +23,7 @@ const ProductDetailComponent = ({ data, slug, loading }) => {
     };
 
     const checkServicebility = async () => {
-        let { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
+        let { data } = await axiosInstance.get("/api/pincode");
         if (Object.keys(data).includes(pin)) {
             setServicebility(true);
             toast.success("Your Pincode is serviceable!", {
@@ -67,7 +67,7 @@ const ProductDetailComponent = ({ data, slug, loading }) => {
     };
 
     const refreshVariant = (newColor, newSize) => {
-        let url = `${process.env.NEXT_PUBLIC_HOST}/product/${variants[newColor][newSize]["slug"]}`;
+        let url = `${process.env.NEXT_PUBLIC_VERCEL_ENV}/product/${variants[newColor][newSize]["slug"]}`;
         router.push(url);
     };
 

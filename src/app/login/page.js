@@ -1,10 +1,10 @@
 "use client";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
+import axiosInstance from "@/helpers/axiosInstance";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
@@ -65,7 +65,7 @@ const Login = () => {
     }
 
     const res = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/login`, userInfo),
+      axiosInstance.post("api/login", userInfo),
       {
         pending: "Please wait...",
         success: {

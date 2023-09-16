@@ -8,7 +8,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { clear, add, remove, subTotal, getCartFromLocalStorage } from "@/redux/CartSlice";
 import { useRouter, usePathname } from "next/navigation";
-import axios from "axios";
+import axiosInstance from "@/helpers/axiosInstance";
 
 const Navbar = () => {
   const path = usePathname();
@@ -29,7 +29,7 @@ const Navbar = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`);
+        const { data } = await axiosInstance.get("/api/getuser");
         setUser({ value: data?.user });
       } catch (error) {
         setUser({ value: null });
@@ -66,7 +66,7 @@ const Navbar = () => {
   // funtion to logout
   const handleLogout = async () => {
     try {
-      await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/logout`);
+      await axiosInstance.get("/api/logout");
       setUser({ value: null });
       router.push("/");
     } catch (error) {

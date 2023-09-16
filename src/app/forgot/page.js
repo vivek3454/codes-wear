@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+import axiosInstance from "@/helpers/axiosInstance";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -45,7 +45,7 @@ const Forgot = ({ _, searchParams }) => {
       return;
     }
     await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/forgotpassword`, { email, sendMail: true }),
+      axiosInstance.post("/api/forgotpassword", { email, sendMail: true }),
       {
         pending: "Please wait...",
         success: {
@@ -90,7 +90,7 @@ const Forgot = ({ _, searchParams }) => {
     }
     if (newPassword && confirmNewPassword && newPassword === confirmNewPassword) {
       await toast.promise(
-        axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/forgotpassword`, { token: searchParams.token, newPassword, sendMail: false }),
+        axiosInstance.post("/api/forgotpassword", { token: searchParams.token, newPassword, sendMail: false }),
         {
           pending: "Please wait...",
           success: {

@@ -1,22 +1,16 @@
 "use client";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
+import axiosInstance from "@/helpers/axiosInstance";
 
 
 const Signup = () => {
   const [userInfo, setUserInfo] = useState({ name: "", email: "", password: "" });
   const [showHidePassword, setShowHidePassword] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      router.push("/");
-    }
-  }, []);
 
   // function to show or hide password
   const handlePasswordShowHide = () => {
@@ -71,7 +65,7 @@ const Signup = () => {
       return;
     }
     const res = await toast.promise(
-      axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, userInfo),
+      axiosInstance.post("/api/signup", userInfo),
       {
         pending: "Please wait...",
         success: {
