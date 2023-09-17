@@ -2,6 +2,8 @@ import connectToDb from "@/config/db";
 import Order from "@/models/Order";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 const MyOrder = async ({ searchParams }) => {
   const [order] = await fetchSingleOrder(searchParams?.id);
   const date = new Date(order?.createdAt).toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });

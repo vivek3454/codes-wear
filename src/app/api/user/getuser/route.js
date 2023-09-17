@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { verify } from "jsonwebtoken";
 import User from "@/models/User";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(Request) {
     // get token from cookies
     const token = cookies().get("codesWearJwt");
