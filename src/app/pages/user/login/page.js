@@ -5,11 +5,14 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import axiosInstance from "@/helpers/axiosInstance";
+import { useDispatch } from "react-redux";
+import { setStateToLocalStorage } from "@/redux/UserSlice";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
   const [showHidePassword, setShowHidePassword] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   // function to show or hide password
   const handlePasswordShowHide = () => {
@@ -70,6 +73,7 @@ const Login = () => {
         pending: "Please wait...",
         success: {
           render() {
+            dispatch(setStateToLocalStorage(true));
             router.push("/");
             return "You are successfully logged in";
           },
