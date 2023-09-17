@@ -25,16 +25,16 @@ const Navbar = () => {
     dispatch(getCartFromLocalStorage());
   }, []);
 
-
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axiosInstance.get("/api/getuser");
+        const { data } = await axiosInstance.get("/api/user/getuser");
         setUser({ value: data?.user });
       } catch (error) {
         setUser({ value: null });
       }
     })();
+    setIsOpen(false);
   }, [path]);
 
   const openCart = () => {
@@ -47,11 +47,12 @@ const Navbar = () => {
 
   const handleClearCart = () => {
     dispatch(clear());
+    setIsOpen(false);
   };
   // to close cart when ever clicked outside from cart
   useEffect(() => {
     const closeCart = (e) => {
-      if (cartRef?.current && !cartRef?.current?.contains(e.target) && !cart1Ref?.current?.contains(e.target)) {
+      if (cartRef.current && !cartRef?.current?.contains(e.target) && !cart1Ref?.current?.contains(e.target)) {
         setIsOpen(false);
       }
     };
@@ -66,7 +67,7 @@ const Navbar = () => {
   // funtion to logout
   const handleLogout = async () => {
     try {
-      await axiosInstance.get("/api/logout");
+      await axiosInstance.get("/api/user/logout");
       setUser({ value: null });
       router.push("/");
     } catch (error) {
@@ -91,24 +92,24 @@ const Navbar = () => {
           <span className="ml-3 text-xl">CodesWear.com</span>
         </Link>
         <nav className="flex flex-wrap items-center text-base justify-center">
-          <Link href={"/tshirts"} className="mr-5 hover:text-red-500">Tshirts</Link>
-          <Link href={"/hoodies"} className="mr-5 hover:text-red-500">Hoodies</Link>
-          <Link href={"/mugs"} className="mr-5 hover:text-red-500">Mugs</Link>
+          <Link href={"/pages/product/tshirts"} className="mr-5 hover:text-red-500">Tshirts</Link>
+          <Link href={"/pages/product/hoodies"} className="mr-5 hover:text-red-500">Hoodies</Link>
+          <Link href={"/pages/product/mugs"} className="mr-5 hover:text-red-500">Mugs</Link>
         </nav>
         <div className="flex items-center md:relative md:top-0 md:right-0 absolute top-2 right-1">
           {user.value &&
-            <div ref={cart1Ref} className="cursor-pointer hover:text-red-500 mr-4 text-[26px]">
+            <div className="cursor-pointer hover:text-red-500 mr-4 text-[26px]">
               <MdAccountCircle onMouseOver={() => setToggleDropDown(true)} onMouseLeave={() => setToggleDropDown(false)} />
             </div>
           }
           {toggleDropDown && <div onMouseOver={() => setToggleDropDown(true)} onMouseLeave={() => setToggleDropDown(false)} className="absolute right-0 top-8 rounded-md px-5 bg-white w-36 shadow-xl">
             <ul className="py-2">
-              <Link href={"/myAccount"}><li className="py-1 hover:text-black text-sm">My Account</li></Link>
-              <Link href={"/orders"}><li className="py-1 hover:text-black text-sm">Orders</li></Link>
+              <Link href={"/pages/user/myAccount"}><li className="py-1 hover:text-black text-sm">My Account</li></Link>
+              <Link href={"/pages/user/orders"}><li className="py-1 hover:text-black text-sm">Orders</li></Link>
               <li onClick={handleLogout} className="py-1 hover:text-black cursor-pointer text-sm">Logout</li>
             </ul>
           </div>}
-          {!user.value && <Link href={"/login"} className="flex mr-4 w-full justify-center rounded-md bg-red-500 px-3 py-1 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Sign in</Link>}
+          {!user.value && <Link href={"/pages/user/login"} className="flex mr-4 w-full justify-center rounded-md bg-red-500 px-3 py-1 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">Sign in</Link>}
           <div ref={cart1Ref} onClick={openCart} className="mr-5 flex items-center cursor-pointer text-2xl md:top-0 hover:text-red-500">
             <AiOutlineShoppingCart />
             {cart?.length > 0 && <span className="relative top-1 -left-2 text-xs bg-red-500 text-black w-4 h-4 flex justify-center items-center font-semibold rounded-full">{cart?.length}</span>}
@@ -129,7 +130,7 @@ const Navbar = () => {
           ))}
         </ol>
         <div className="flex gap-2">
-          <Link href={"/checkout"}>
+          <Link href={"/pages/checkout"}>
             <button disabled={cart.length === 0} className="flex text-white disabled:bg-red-300 bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded"><BsFillBagCheckFill className="m-1" /> CheckOut</button>
           </Link>
           <button disabled={cart.length === 0} onClick={handleClearCart} className="flex text-white disabled:bg-red-300 bg-red-500 border-0 py-1 px-2 focus:outline-none hover:bg-red-600 rounded">Clear Cart</button>

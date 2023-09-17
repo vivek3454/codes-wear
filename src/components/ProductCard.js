@@ -3,7 +3,7 @@ import React from "react";
 
 const ProductCard = ({ slug, img, title, color, size, price, category }) => {
     return (
-        <Link href={`/product/${slug}`} className="shadow-xl hover:shadow m-2 rounded">
+        <Link href={`/pages/product/${slug}`} className="shadow-xl hover:shadow m-2 rounded">
             <div className="w-60 m-2 p-2">
                 <div className="block relative rounded overflow-hidden">
                     <img alt="ecommerce" className="object-contain object-center w-full h-[35vh] block" src={img} />

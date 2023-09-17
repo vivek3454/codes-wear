@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "@/helpers/axiosInstance";
 
-const ProductDetailComponent = ({ data, slug, loading }) => {
+const ProductDetailComponent = ({ data, slug }) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const [pin, setPin] = useState();
@@ -23,7 +23,7 @@ const ProductDetailComponent = ({ data, slug, loading }) => {
     };
 
     const checkServicebility = async () => {
-        let { data } = await axiosInstance.get("/api/pincode");
+        let { data } = await axiosInstance.get("/api/user/pincode");
         if (Object.keys(data).includes(pin)) {
             setServicebility(true);
             toast.success("Your Pincode is serviceable!", {
@@ -67,7 +67,7 @@ const ProductDetailComponent = ({ data, slug, loading }) => {
     };
 
     const refreshVariant = (newColor, newSize) => {
-        let url = `${process.env.NEXT_PUBLIC_VERCEL_ENV}/product/${variants[newColor][newSize]["slug"]}`;
+        let url = `${process.env.NEXT_PUBLIC_VERCEL_ENV}/pages/product/${variants[newColor][newSize]["slug"]}`;
         router.push(url);
     };
 
@@ -76,11 +76,11 @@ const ProductDetailComponent = ({ data, slug, loading }) => {
         dispatch(clear());
         // adding in cart
         dispatch(add({ name: product.title, price: product.price, slug: product.slug, qty: 1, size, color }));
-        router.push("/checkout");
+        router.push("/pages/checkout");
     };
     return (
         <div className="container px-5 py-14 mx-auto min-h-[90vh] flex items-center">
-            {color && size && variants && product && !loading &&
+            {color && size && variants && product &&
                 <div className="lg:w-4/5 w-full mx-auto flex justify-center lg:gap-20 flex-wrap">
                     <img alt="ecommerce" className="lg:w-1/3 lg:max-h-[500px] w-96 object-contain object-top rounded" src={product.img} />
                     <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
