@@ -3,6 +3,8 @@ import connectToDb from "@/config/db";
 import Product from "@/models/Product";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 const getMugs = async () => {
   try {
     await connectToDb();
