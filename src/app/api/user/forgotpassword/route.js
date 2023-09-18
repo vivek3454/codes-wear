@@ -35,7 +35,7 @@ export async function POST(Request) {
         
                 If you did not make this request then please ignore this email.
         
-                Otherwise, please click this link to change your password: <a href="http://localhost:3000/forgot?token=${token}">reset password</a>
+                Otherwise, please click this link to change your password: <a href="${process.env.NEXT_PUBLIC_VERCEL_ENV}/pages/user/forgot?token=${token}">reset password</a>
             `;
             // create transporter object using the default SMTP transport
             let transporter = createTransport({

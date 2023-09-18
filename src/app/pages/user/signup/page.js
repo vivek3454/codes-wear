@@ -70,7 +70,7 @@ const Signup = () => {
         pending: "Please wait...",
         success: {
           render() {
-            router.push("/login");
+            router.push("/pages/user/login");
             return "Your account created successfully";
           },
         },
@@ -134,7 +134,7 @@ const Signup = () => {
 
         <p className="mt-10 text-center text-sm text-gray-500">
           already have an account?
-          <Link href="/login" className="font-semibold ml-1 leading-6 text-red-500 hover:text-red-600">Login</Link>
+          <Link href="/pages/user/login" className="font-semibold ml-1 leading-6 text-red-500 hover:text-red-600">Login</Link>
         </p>
       </div>
     </div>
