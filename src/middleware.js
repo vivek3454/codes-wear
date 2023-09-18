@@ -6,19 +6,19 @@ let cookie;
 export async function middleware(Request) {
     cookie = Request.cookies.get("codesWearJwt");
     let pathname = Request.nextUrl.pathname;
-    if (!cookie && pathname.startsWith("/myAccount")) {
-        return NextResponse.redirect(new URL("/login", Request.url));
+    if (!cookie && pathname.startsWith("/pages/user/myAccount")) {
+        return NextResponse.redirect(new URL("/pages/user/login", Request.url));
     }
-    if (!cookie && pathname.startsWith("/order")) {
-        return NextResponse.redirect(new URL("/login", Request.url));
+    if (!cookie && pathname.startsWith("/pages/user/order")) {
+        return NextResponse.redirect(new URL("/pages/user/login", Request.url));
     }
-    if (!cookie && pathname.startsWith("/orders")) {
-        return NextResponse.redirect(new URL("/login", Request.url));
+    if (!cookie && pathname.startsWith("/pages/user/orders")) {
+        return NextResponse.redirect(new URL("/pages/user/login", Request.url));
     }
-    if (cookie && pathname.startsWith("/login")) {
+    if (cookie && pathname.startsWith("/pages/user/login")) {
         return NextResponse.redirect(new URL("/", Request.url));
     }
-    if (cookie && pathname.startsWith("/signup")) {
+    if (cookie && pathname.startsWith("/pages/user/signup")) {
         return NextResponse.redirect(new URL("/", Request.url));
     }
 }
