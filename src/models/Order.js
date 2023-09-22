@@ -26,6 +26,7 @@ const orderSchema = new mongoose.Schema({
     phone: { type: String },
     checkoutAmount: { type: Number, required: true },
     status: { type: String, default: "Pending", required: true },
+    deliveryStatus: { type: String, default: "Pending" },
 }, { timestamps: true });
 
 mongoose.models = {};
