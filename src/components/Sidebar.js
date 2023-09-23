@@ -13,7 +13,7 @@ import Image from "next/image";
 const Sidebar = () => {
     const [isOpen, setisOpen] = useState(false);
     const path = usePathname();
-    console.log(path);
+
     const handleOpen = () => {
         setisOpen(true);
     };
@@ -22,7 +22,7 @@ const Sidebar = () => {
     };
     return (
         <>
-            <aside className={`px-4 shadow-[0px_8px_35px] transform transition-transform ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0  shadow-gray-300 w-60 fixed top-0 left-0 bottom-0 md:static bg-white`}>
+            <aside className={`px-4 shadow-[0px_8px_35px] transform transition-transform ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0  shadow-gray-300 w-60 fixed top-0 left-0 bottom-0 z-50 md:static bg-white`}>
                 <div className="flex flex-col gap-5">
                     <div className="px-2 py-3 flex items-center justify-between">
                         <Link href={"/"} className="flex items-center">
@@ -36,17 +36,17 @@ const Sidebar = () => {
                             <BiHomeAlt size={20} className="text-gray-700" />
                             Dashboard
                         </Link>
+                        <Link href={"/pages/admin/allproducts"} onClick={handleClose} className={`px-1 py-1 rounded ${path === "/pages/admin/updateproduct" ? "hover:bg-red-400" : "hover:bg-gray-100"} ${path === "/pages/admin/updateproduct" ? "bg-red-400" : "bg-white"} flex gap-3 items-center`}>
+                            <RxUpdate size={18} className="text-gray-700" />
+                            All Products
+                        </Link>
                         <Link href={"/pages/admin/addproduct"} onClick={handleClose} className={`px-1 py-1 rounded ${path === "/pages/admin/addproduct" ? "hover:bg-red-400" : "hover:bg-gray-100"} ${path === "/pages/admin/addproduct" ? "bg-red-400" : "bg-white"} flex gap-3 items-center`}>
                             <FiUpload size={20} className="text-gray-700" />
                             Add Products
                         </Link>
-                        <Link href={"/pages/admin/updateproduct"} onClick={handleClose} className={`px-1 py-1 rounded ${path === "/pages/admin/updateproduct" ? "hover:bg-red-400" : "hover:bg-gray-100"} ${path === "/pages/admin/updateproduct" ? "bg-red-400" : "bg-white"} flex gap-3 items-center`}>
-                            <RxUpdate size={18} className="text-gray-700" />
-                            Update Products
-                        </Link>
                         <Link href={"/pages/admin/orders"} onClick={handleClose} className={`px-1 py-1 rounded ${path === "/pages/admin/orders" ? "hover:bg-red-400" : "hover:bg-gray-100"} ${path === "/pages/admin/orders" ? "bg-red-400" : "bg-white"} flex gap-3 items-center`}>
                             <AiOutlineShoppingCart size={20} className="text-gray-700" />
-                            Orders
+                            All Orders
                         </Link>
                         <Link href={"/"} className="px-2 py-1 rounded hover:bg-gray-100 flex gap-3 items-center">
                             <GrUndo size={20} className="text-gray-700" />

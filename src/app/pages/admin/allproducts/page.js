@@ -1,43 +1,20 @@
 "use client";
-import Product from "@/models/Product";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import axiosInstance from "@/helpers/axiosInstance";
 import { toast } from "react-toastify";
 import Loading from "@/components/Loading";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
+  const router = useRouter();
 
   const getAllProducts = async () => {
     try {
       const { data } = await axiosInstance.get("/api/product/getproducts");
       setProducts(data.products);
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  const handlDelete = async (id, title) => {
-    try {
-
-      const res = axiosInstance.delete(`/api/product/deleteproduct?id=${id}`);
-      toast.promise(res, {
-        pending: "Deleting...",
-        success: `${title} Deleted Successfully`,
-        error: "Not Deleted. Try again"
-      },
-        {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      getAllProducts();
     } catch (error) {
       toast.error(error.message, {
         position: "top-center",
@@ -51,38 +28,41 @@ const AllProducts = () => {
       });
     }
   };
-  const handlUpdate = (slug, title) => {
-    alert(slug);
-    // try {
-    //   const res = axiosInstance.put("/api/product/updateproduct",);
-    //   toast.promise(res, {
-    //     pending: "Updating...",
-    //     success: `${title} Updated Successfully`,
-    //     error: "Not Updated. Try again"
-    //   },
-    //     {
-    //       position: "top-center",
-    //       autoClose: 1000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //       theme: "light",
-    //     });
-    //   getAllProducts();
-    // } catch (error) {
-    //   toast.error(error.message, {
-    //     position: "top-center",
-    //     autoClose: 1000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "light",
-    //   });
-    // }
+
+  const handlDelete = async (id, title) => {
+    if (window.confirm("Are you sure to delete?")) {
+      try {
+        const res = axiosInstance.delete(`/api/product/deleteproduct?id=${id}`);
+        toast.promise(res, {
+          pending: "Deleting...",
+          success: `${title} Deleted Successfully`,
+          error: "Not Deleted. Try again"
+        },
+          {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        getAllProducts();
+      } catch (error) {
+        toast.error(error.message, {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    }
+
   };
 
   useEffect(() => {
@@ -114,7 +94,7 @@ const AllProducts = () => {
                   <div className="flex flex-col gap-3">
                     <p className="mt-1">₹{product.price}</p>
                     <div className="flex gap-4 items-center">
-                      <button onClick={() => handlUpdate(product.slug, product.title)} className="text-lg"><FaEdit /></button>
+                      <Link href={{ pathname: "/pages/admin/updateproduct", query: product }} className="text-lg"><FaEdit /></Link>
                       <button onClick={() => handlDelete(product._id, product.title)} ><FaTrash /></button>
                     </div>
                   </div>
