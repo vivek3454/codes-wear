@@ -1,15 +1,16 @@
+import connectToDb from "@/config/db";
 import Order from "@/models/Order";
 import Link from "next/link";
 import React from "react";
 
 const getAllOrders = async () => {
+  await connectToDb();
   const orders = await Order.find({status: "Paid"});
   return orders;
 };
 
 const Orders = async () => {
   const orders = await getAllOrders();
-  console.log(orders);
   return (
     <div className="p-5">
       <h1 className="text-center text-2xl font-semibold my-5">All Orders</h1>
