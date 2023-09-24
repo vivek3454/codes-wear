@@ -118,7 +118,7 @@ const ProductDetailComponent = ({ data, slug }) => {
                             </div>
                         </div>
                         <div className="flex">
-                            {product.availableQty > 0 && <span className="title-font font-medium text-2xl text-gray-900">₹899</span>}
+                            {product.availableQty > 0 && <span className="title-font font-medium text-2xl text-gray-900">₹{product.price}</span>}
                             {product.availableQty <= 0 && <span className="title-font font-medium text-xl text-red-800">Out of Stock!</span>}
                             <button disabled={product.availableQty <= 0} onClick={() => buyNow()} className="flex ml-4 text-white bg-red-500 disabled:bg-red-300 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-red-600 rounded">Buy Now</button>
                             <button disabled={product.availableQty <= 0} onClick={handleAddToCart} className="flex ml-2 text-white bg-red-500 disabled:bg-red-300 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-red-600 rounded">Add to Cart</button>
