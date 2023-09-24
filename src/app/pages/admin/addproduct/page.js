@@ -3,7 +3,7 @@ import axiosInstance from "@/helpers/axiosInstance";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
-const Page = () => {
+const AddProduct = () => {
     const [product, setProduct] = useState({ title: "", slug: "", desc: "", img: "", category: "", size: "", color: "", price: "", availableQty: "" });
     const handleOnchange = (e) => {
         setProduct({ ...product, [e.target.name]: e.target.value });
@@ -80,7 +80,7 @@ const Page = () => {
                 </div>
                 <div className="flex flex-col w-full">
                     <label htmlFor="desc">Description</label>
-                    <input onChange={handleOnchange} value={product.desc} type="text" className="w-full h-8 rounded outline-none border-2 border-gray-500 px-2" name="desc" id="desc" />
+                    <textarea onChange={handleOnchange} value={product.desc} type="text" className="w-full h-28 resize-none py-2 rounded outline-none border-2 border-gray-500 px-2" name="desc" id="desc" />
                 </div>
                 <div className="flex flex-col w-full">
                     <label htmlFor="img">Image</label>
@@ -93,8 +93,6 @@ const Page = () => {
                         <option value="Hoodie">Hoodie</option>
                         <option value="Mug">Mug</option>
                     </select>
-                    <p>{product.category}</p>
-                    {/* <input onChange={handleOnchange} value={product.category} type="text" className="w-full h-8 rounded outline-none border-2 border-gray-500 px-2" name="category" id="category" /> */}
                 </div>
                 <div className="flex flex-col w-full">
                     <label htmlFor="size">Size</label>
@@ -102,8 +100,9 @@ const Page = () => {
                         <option value="S">S</option>
                         <option value="M">M</option>
                         <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
                     </select>
-                    {/* <input onChange={handleOnchange} value={product.size} type="text" className="w-full h-8 rounded outline-none border-2 border-gray-500 px-2" name="size" id="size" /> */}
                 </div>
                 <div className="flex flex-col w-full">
                     <label htmlFor="color">Color</label>
@@ -112,6 +111,8 @@ const Page = () => {
                         <option value="red">Red</option>
                         <option value="orange">Orange</option>
                         <option value="black">Black</option>
+                        <option value="green">Green</option>
+                        <option value="blue">Blue</option>
                     </select>
                 </div>
                 <div className="flex flex-col w-full">
@@ -130,4 +131,4 @@ const Page = () => {
     );
 };
 
-export default Page;
+export default AddProduct;
