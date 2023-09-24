@@ -15,26 +15,16 @@ const Navbar = () => {
   const path = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
-  // const [user, setUser] = useState({ value: null });
   const [isOpen, setIsOpen] = useState(false);
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const { cart } = useSelector((state) => state.cart);
-  const { isUser } = useSelector((state) => state.user);
+  const { isUser,role } = useSelector((state) => state.user);
   const cartRef = useRef();
   const cart1Ref = useRef();
   // getting localy stored cart
   useEffect(() => {
     dispatch(getCartFromLocalStorage());
   }, []);
-  
-  // (async () => {
-  //   try {
-  //     const { data } = await axiosInstance.get("/api/user/getuser");
-  //     setUser({ value: data?.user });
-  //   } catch (error) {
-  //     setUser({ value: null });
-  //   }
-  // })();
 
   const openCart = () => {
     setIsOpen(true);
@@ -67,7 +57,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await axiosInstance.get("/api/user/logout");
-      dispatch(setStateToLocalStorage(false));
+      dispatch(setStateToLocalStorage({isUser: false, role: ""}));
       router.push("/");
     } catch (error) {
       console.log(error);
@@ -96,6 +86,11 @@ const Navbar = () => {
           <Link href={"/pages/product/mugs"} className="mr-5 hover:text-red-500">Mugs</Link>
         </nav>
         <div className="flex items-center md:relative md:top-0 md:right-0 absolute top-2 right-1">
+          {role === "ADMIN" &&
+            <Link href={"/pages/admin"} className="flex text-white disabled:bg-red-300 bg-red-500 border-0 py-1 px-2 mr-2 focus:outline-none hover:bg-red-600 rounded">
+              Dashboard
+            </Link>
+          }
           {isUser &&
             <div className="cursor-pointer hover:text-red-500 mr-4 text-[26px]">
               <MdAccountCircle onMouseOver={() => setToggleDropDown(true)} onMouseLeave={() => setToggleDropDown(false)} />

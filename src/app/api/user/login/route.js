@@ -17,13 +17,13 @@ export async function POST(Request) {
         const originalText = CryptoJS.AES.decrypt(user.password, process.env.AES_SECRET).toString(CryptoJS.enc.Utf8);
         if (password === originalText) {
             // generating jwt token
-            const token = sign({ name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: "2d" });
+            const token = sign({ name: user.name, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: "2d" });
             const cookieOption = {
                 maxAge: 7 * 24 * 60 * 60,
                 httpOnly: true
             };
             cookies().set("codesWearJwt", token, cookieOption);
-            return NextResponse.json({ success: true, token }, { status: 200 });
+            return NextResponse.json({ success: true, user }, { status: 200 });
         }
         else {
             return NextResponse.json({ success: false, message: "please enter correct password" }, { status: 400 });

@@ -72,8 +72,8 @@ const Login = () => {
       {
         pending: "Please wait...",
         success: {
-          render() {
-            dispatch(setStateToLocalStorage(true));
+          render({ data }) {
+            dispatch(setStateToLocalStorage({ isUser: data.data.success, role: data.data.user.role }));
             router.push("/");
             return "You are successfully logged in";
           },
