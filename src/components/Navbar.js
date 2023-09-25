@@ -110,7 +110,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div ref={cartRef} className={`w-80 overflow-y-scroll h-[100vh] absolute top-0 bottom-0 right-0 bg-red-100 py-10 px-8 transition-transform ${(isOpen) ? "translate-x-0" : "translate-x-full"}`}>
+      <div ref={cartRef} className={`w-80 overflow-y-scroll h-[100vh] fixed top-0 bottom-0 right-0 bg-red-100 py-10 px-8 transition-transform ${(isOpen) ? "translate-x-0" : "translate-x-full"}`}>
         <h2 className="font-bold text-xl text-center">Shopping Cart</h2>
         <span onClick={closeCart} className="absolute text-2xl cursor-pointer top-2 right-2 text-red-400"><AiFillCloseCircle /></span>
         <ol className="list-decimal font-semibold mb-10">
