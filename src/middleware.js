@@ -22,18 +22,22 @@ export async function middleware(Request) {
 
     // protect admin routes
     if (cookie) {
-        const { payload } = await jwtVerify(cookie?.value, new TextEncoder().encode(process.env.JWT_SECRET));
-        if (
-            payload.role === "USER" &&
-            (
-                pathname.startsWith("/pages/admin") ||
-                pathname.startsWith("/pages/admin/addproduct") ||
-                pathname.startsWith("/pages/admin/allproducts") ||
-                pathname.startsWith("/pages/admin/orders") ||
-                pathname.startsWith("/pages/admin/updateproduct")
-            )
-        ) {
-            return NextResponse.redirect(new URL("/", Request.url));
+        try {
+            const { payload } = await jwtVerify(cookie?.value, new TextEncoder().encode(process.env.JWT_SECRET));
+            if (
+                payload.role === "USER" &&
+                (
+                    pathname.startsWith("/pages/admin") ||
+                    pathname.startsWith("/pages/admin/addproduct") ||
+                    pathname.startsWith("/pages/admin/allproducts") ||
+                    pathname.startsWith("/pages/admin/orders") ||
+                    pathname.startsWith("/pages/admin/updateproduct")
+                )
+            ) {
+                return NextResponse.redirect(new URL("/", Request.url));
+            }
+        } catch (error) {
+            throw error;
         }
     }
 }
