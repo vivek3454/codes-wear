@@ -13,7 +13,7 @@ This is a fullstack ecommerce project build while learning next js.
 - Payment Gateway Integration
 - Database Integration
 - Product Management
-
+- Admin Dashboard
 
 ## Tech Stack
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
@@ -92,8 +92,3 @@ Open your browser and visit
 ```bash
 http://localhost:3000
 ```
-
-## Future Plan
-
-- create admin dashboard
-- add product filtering
